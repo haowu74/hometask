@@ -17,6 +17,8 @@ class TaskTableViewController: UITableViewController {
     var ref: DatabaseReference!
     var storageRef: StorageReference!
     fileprivate var _refHandle: DatabaseHandle!
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    var familyExisting = false
     
     var email: String?
     
@@ -57,7 +59,7 @@ class TaskTableViewController: UITableViewController {
         configureDatabase()
         configureStorage()
         
-        
+        getFamilyMember()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -127,6 +129,22 @@ class TaskTableViewController: UITableViewController {
     }
     */
 
+    func getFamilyMember() {
+        let familyId = Utils.getHash(email!)
+        ref.child("families").child(familyId).observeSingleEvent(of: .value) { (snapshot) in
+            let value = snapshot.value as? NSDictionary
+            if value != nil {
+                let email = value?["family"] as? String ?? ""
+                let names = value?["name"] as? [String] ?? []
+                self.appDelegate.family.email = email
+                self.appDelegate.family.names = names
+                self.familyExisting = true
+            }
+            else{
+                self.familyExisting = false
+            }
+        }
+    }
     
     // MARK: - Navigation
 
@@ -138,6 +156,7 @@ class TaskTableViewController: UITableViewController {
             let configurationViewController = segue.destination as! ConfigurationViewController
             configurationViewController.email = email
             configurationViewController.ref = ref
+            configurationViewController.familyExisting = familyExisting
         }
     }
 

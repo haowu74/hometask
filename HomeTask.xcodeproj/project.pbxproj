@@ -11,6 +11,7 @@
 		28068C09215F0FD000008C92 /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28068C08215F0FD000008C92 /* ConfigurationViewController.swift */; };
 		28068C0B215F144C00008C92 /* PhotoPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28068C0A215F144C00008C92 /* PhotoPickerViewController.swift */; };
 		28068C0D215FB0B600008C92 /* Family.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28068C0C215FB0B500008C92 /* Family.swift */; };
+		28068C10215FC17F00008C92 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28068C0F215FC17F00008C92 /* Utils.swift */; };
 		28490F0F21469B0800813AB1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28490F0E21469B0800813AB1 /* AppDelegate.swift */; };
 		28490F1121469B0800813AB1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28490F1021469B0800813AB1 /* ViewController.swift */; };
 		28490F1421469B0800813AB1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 28490F1221469B0800813AB1 /* Main.storyboard */; };
@@ -30,6 +31,7 @@
 		28068C08215F0FD000008C92 /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
 		28068C0A215F144C00008C92 /* PhotoPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerViewController.swift; sourceTree = "<group>"; };
 		28068C0C215FB0B500008C92 /* Family.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Family.swift; sourceTree = "<group>"; };
+		28068C0F215FC17F00008C92 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		28490F0B21469B0800813AB1 /* HomeTask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HomeTask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		28490F0E21469B0800813AB1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		28490F1021469B0800813AB1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -60,6 +62,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		28068C0E215FC16300008C92 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				28068C0F215FC17F00008C92 /* Utils.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		28490F0221469B0800813AB1 = {
 			isa = PBXGroup;
 			children = (
@@ -81,6 +91,7 @@
 		28490F0D21469B0800813AB1 /* HomeTask */ = {
 			isa = PBXGroup;
 			children = (
+				28068C0E215FC16300008C92 /* Utils */,
 				288571B0215F0485008A89D8 /* Models */,
 				288571AF215F03AA008A89D8 /* Views */,
 				288571AC215F0348008A89D8 /* Controllers */,
@@ -317,6 +328,7 @@
 				288571B2215F0496008A89D8 /* Constants.swift in Sources */,
 				28490F0F21469B0800813AB1 /* AppDelegate.swift in Sources */,
 				28490F1721469B0800813AB1 /* HomeTask.xcdatamodeld in Sources */,
+				28068C10215FC17F00008C92 /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

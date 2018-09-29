@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import FirebaseAuthUI
 import FirebaseGoogleAuthUI
-import CommonCrypto
+
 
 class ConfigurationViewController: UIViewController {
 
@@ -18,9 +18,11 @@ class ConfigurationViewController: UIViewController {
     var ref: DatabaseReference!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var familyExisting = false
+    var selectedMemberIdx = 0
     
     @IBOutlet weak var familyEmailAddress: UILabel!
     @IBOutlet weak var fullName: UITextField!
+    @IBOutlet weak var familyMemberList: UIPickerView!
     
     @IBAction func updateName(_ sender: Any) {
         let data = [Constants.FamilyFields.family: email! as String]
@@ -36,11 +38,19 @@ class ConfigurationViewController: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
+    @IBAction func openFamilyMemberList(_ sender: Any) {
+        familyMemberList.isHidden = false
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        familyEmailAddress.text = email
+
         // Do any additional setup after loading the view.
-        getFamilyMember()
+        familyEmailAddress.text = email
+        familyMemberList.isHidden = true
+        familyMemberList.delegate = self
+        familyMemberList.dataSource = self
+        familyMemberList.layer.borderWidth = 1
     }
     
 
@@ -57,18 +67,27 @@ class ConfigurationViewController: UIViewController {
     func updateFamilyMember(data: [String:Any]) {
         var mdata = data
         mdata[Constants.FamilyFields.name] = [fullName.text] as? [String]
-        //mdata[Constants.FamilyFields.family] = email
-        //ref.child("families").childByAutoId().child("name").setValue(mdata)
-        //var id = ref.child("families").childByAutoId()
-        //ref.child("families").child("haowu74").child("email").setValue(mdata)
-        let familyId = getHash(email!)
+
+        let familyId = Utils.getHash(email!)
         if !familyExisting {
             ref.child("families").child(familyId).setValue(mdata)
         }
         else {
             if let name = fullName.text {
                 if !(self.appDelegate.family.names.contains(name)) {
-                    self.appDelegate.family.names.append(name)
+                    if selectedMemberIdx == 0 {
+                        if !name.isEmpty {
+                            self.appDelegate.family.names.append(name)
+                        }
+                    }
+                    else {
+                        if !name.isEmpty {
+                            self.appDelegate.family.names[selectedMemberIdx-1] = name
+                        }
+                        else {
+                            self.appDelegate.family.names.remove(at: selectedMemberIdx-1)
+                        }
+                    }
                     let family: [String: Any] = [
                         "family": email ?? "",
                         "name": self.appDelegate.family.names
@@ -76,36 +95,43 @@ class ConfigurationViewController: UIViewController {
                     let familyUpdate = ["/families/\(familyId)": family]
                     ref.updateChildValues(familyUpdate)
                 }
+                else if name.isEmpty {
+                    self.appDelegate.family.names.remove(at: selectedMemberIdx-1)
+                }
             }
         }
     }
+}
+
+// Mark: Extension for UIPickerViewDelegate and UIPickerViewDataSource
+
+extension ConfigurationViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
     
-    func getFamilyMember() {
-        let familyId = getHash(email!)
-        ref.child("families").child(familyId).observeSingleEvent(of: .value) { (snapshot) in
-            let value = snapshot.value as? NSDictionary
-            if value != nil {
-                let email = value?["family"] as? String ?? ""
-                let names = value?["name"] as? [String] ?? []
-                self.appDelegate.family.email = email
-                self.appDelegate.family.names = names
-                self.familyExisting = true
-            }
-            else{
-                self.familyExisting = false
-            }
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return appDelegate.family.names.count + 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        if row < appDelegate.family.names.count {
+            return appDelegate.family.names[row]
+        }
+        else {
+            return "New Member"
         }
     }
     
-    private func getHash(_ string: String) -> String {
-        let messageData = string.data(using:.utf8)!
-        var digestData = Data(count: Int(CC_MD5_DIGEST_LENGTH))
-        
-        _ = digestData.withUnsafeMutableBytes {digestBytes in
-            messageData.withUnsafeBytes {messageBytes in
-                CC_MD5(messageBytes, CC_LONG(messageData.count), digestBytes)
-            }
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        if row < appDelegate.family.names.count {
+            selectedMemberIdx = row + 1
+            fullName.text = appDelegate.family.names[row]
         }
-        return digestData.map { String(format: "%02hhx", $0) }.joined()
+        else {
+            selectedMemberIdx = 0
+            fullName.text = ""
+        }
+        familyMemberList.isHidden = true
     }
 }

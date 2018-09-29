@@ -188,6 +188,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
+                                    <action selector="openFamilyMemberList:" destination="pNf-hn-PW4" eventType="touchDown" id="pOw-dR-z1v"/>
                                     <action selector="updateName:" destination="pNf-hn-PW4" eventType="editingDidEnd" id="taZ-ju-vzA"/>
                                 </connections>
                             </textField>
@@ -199,18 +200,23 @@
                                     <action selector="logout:" destination="pNf-hn-PW4" eventType="touchUpInside" id="6Pf-GM-g3W"/>
                                 </connections>
                             </button>
+                            <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xiq-n8-KIO" userLabel="Family Member List">
+                                <rect key="frame" x="16" y="238" width="343" height="169"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            </pickerView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="mwl-1X-So5"/>
                     </view>
                     <connections>
                         <outlet property="familyEmailAddress" destination="fDT-K3-B9t" id="uWC-HZ-6BS"/>
+                        <outlet property="familyMemberList" destination="Xiq-n8-KIO" id="f2m-lc-Rhc"/>
                         <outlet property="fullName" destination="wfz-6D-fks" id="Dvy-cY-UcI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Vtp-pL-JQD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2616.8000000000002" y="813.64317841079469"/>
+            <point key="canvasLocation" x="1793" y="824"/>
         </scene>
         <!--Photo Picker View Controller-->
         <scene sceneID="iex-rr-FC3">
@@ -248,7 +254,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uHL-6M-tCF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3557.5999999999999" y="805.54722638680664"/>
+            <point key="canvasLocation" x="2638" y="824"/>
         </scene>
         <!--Task Assign View Controller-->
         <scene sceneID="XDd-Sq-myM">
