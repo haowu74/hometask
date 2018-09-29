@@ -16,8 +16,7 @@ class LoginViewController: UIViewController {
     
     // MARK: Properties
     
-    var ref: DatabaseReference!
-    var storageRef: StorageReference!
+
     var user: User?
     fileprivate var _refHandle: DatabaseHandle!
     fileprivate var _authHandle: AuthStateDidChangeListenerHandle!
@@ -88,22 +87,14 @@ class LoginViewController: UIViewController {
         })
     }
     
-    func configureDatabase() {
-        ref = Database.database().reference()
-        _refHandle = ref.child("messages").observe(.childAdded, with: { (snapshot: DataSnapshot) in
-            //self.messages.append(snapshot)
-            //self.messagesTable.insertRows(at: [IndexPath(row: self.messages.count - 1, section: 0)], with: .automatic)
-            //self.scrollToBottomMessage()
-        })
-    }
+
     
-    func configureStorage() {
-        storageRef = Storage.storage().reference()
-    }
-    
+
+    /*
     deinit {
         ref.child("messages").removeObserver(withHandle: _refHandle)
     }
+    */
     
     func unsubscribeFromAllNotifications() {
         NotificationCenter.default.removeObserver(self)
@@ -125,8 +116,7 @@ class LoginViewController: UIViewController {
             //backgroundBlur.effect = nil
             //messageTextField.delegate = self
             
-            configureDatabase()
-            configureStorage()
+
         }
     }
     
@@ -143,6 +133,8 @@ class LoginViewController: UIViewController {
         // Pass the selected object to the new view controller.
         if segue.identifier == "ShowNav" {
             //let photoAlbumViewController = segue.destination as! NavViewController
+            let taskTableViewController = (segue.destination as! UINavigationController).childViewControllers[0] as! TaskTableViewController
+            taskTableViewController.email = user?.email
         }
     }
 

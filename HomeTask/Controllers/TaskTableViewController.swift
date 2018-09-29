@@ -13,18 +13,51 @@ import FirebaseGoogleAuthUI
 
 class TaskTableViewController: UITableViewController {
     
-    @IBAction func logout(_ sender: Any) {
-        do {
-            try Auth.auth().signOut()
-        } catch {
-            print("unable to sign out: \(error)")
-        }
-        self.dismiss(animated: true, completion: nil)
+    var tasks: [DataSnapshot]! = []
+    var ref: DatabaseReference!
+    var storageRef: StorageReference!
+    fileprivate var _refHandle: DatabaseHandle!
+    
+    var email: String?
+    
+    @IBAction func config(_ sender: Any) {
+        self.performSegue(withIdentifier: "configuration", sender: nil)
     }
+    
+
+    
+    @IBAction func addNewTask(_ sender: UIBarButtonItem) {
+        self.performSegue(withIdentifier: "taskDetail", sender: nil)
+    }
+    
+    
+    func configureDatabase() {
+        ref = Database.database().reference()
+        _refHandle = ref.child("tasks").observe(.childAdded, with: { (snapshot: DataSnapshot) in
+            self.tasks.append(snapshot)
+            self.tableView.insertRows(at: [IndexPath(row: self.tasks.count - 1, section: 0)], with: .automatic)
+            //self.scrollToBottomMessage()
+        })
+    }
+    
+    func configureStorage() {
+        storageRef = Storage.storage().reference()
+    }
+    
+    /*
+    func sendTask(data: [String:String]) {
+        var mdata = data
+        mdata[Constants.MessageFields.name] = displayName
+        ref.child("task").childByAutoId().setValue(mdata)
+    }
+ */
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        configureDatabase()
+        configureStorage()
+        
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -46,7 +79,7 @@ class TaskTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 3
+        return tasks.count
     }
 
     /*
@@ -94,14 +127,18 @@ class TaskTableViewController: UITableViewController {
     }
     */
 
-    /*
+    
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        if segue.identifier == "configuration" {
+            let configurationViewController = segue.destination as! ConfigurationViewController
+            configurationViewController.email = email
+            configurationViewController.ref = ref
+        }
     }
-    */
 
 }
