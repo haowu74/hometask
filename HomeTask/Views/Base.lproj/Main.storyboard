@@ -288,13 +288,22 @@
                                 <date key="date" timeIntervalSinceReferenceDate="559874657.62844598">
                                     <!--2018-09-29 00:44:17 +0000-->
                                 </date>
+                                <connections>
+                                    <action selector="dueDateSelected:" destination="cQ5-RV-Edo" eventType="valueChanged" id="MGF-sW-Lje"/>
+                                </connections>
                             </datePicker>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="nJ5-eM-f5e"/>
                     </view>
+                    <connections>
+                        <outlet property="dueDatePicker" destination="Mxt-2I-vNB" id="m8M-A3-ack"/>
+                        <outlet property="familyMemberList" destination="CNr-uh-MAP" id="wY7-ee-Gsm"/>
+                        <segue destination="6Jr-XW-TJu" kind="unwind" identifier="unwindTaskAssigneeDue" unwindAction="unwindFromTaskAssignViewControllerWithSegue:" id="8a1-ml-yu8"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Pju-wn-4Vr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="6Jr-XW-TJu" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="3557.5999999999999" y="47.226386806596707"/>
         </scene>

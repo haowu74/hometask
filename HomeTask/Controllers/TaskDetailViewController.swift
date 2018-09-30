@@ -10,6 +10,11 @@ import UIKit
 
 class TaskDetailViewController: UIViewController {
 
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    
+    var name: String?
+    var dueDate: Date?
+    
     @IBOutlet weak var taskPicture: UIImageView!
     @IBOutlet weak var taskTitle: UITextField!
     @IBOutlet weak var taskDescription: UITextView!
@@ -24,10 +29,25 @@ class TaskDetailViewController: UIViewController {
         self.performSegue(withIdentifier: "taskAssigneeDue", sender: nil)
     }
     
+    @IBAction func unwindFromTaskAssignViewController(segue: UIStoryboardSegue) {
+        
+        let taskAssignViewController = segue.source as! TaskAssignViewController
+        name = taskAssignViewController.name
+        dueDate = taskAssignViewController.dueDate
+
+        if let name = name {
+            taskAssignee.text = name
+        }
+        if let due = dueDate {
+            taskDueDate.text = due.description
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         taskDescription.layer.borderWidth = 2
         // Do any additional setup after loading the view.
+
     }
     
 
@@ -40,5 +60,7 @@ class TaskDetailViewController: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
+    
+    
 
 }
