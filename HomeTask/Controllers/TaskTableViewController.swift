@@ -37,7 +37,7 @@ class TaskTableViewController: UITableViewController {
     func configureDatabase() {
         let familyId = Utils.getHash(email!)
         ref = Database.database().reference()
-        _refHandle = ref.child("tasks").observe(.childAdded, with: { (snapshot: DataSnapshot) in
+        _refHandle = ref.child("tasks").queryOrderedByKey().queryEqual(toValue: familyId).observe(.childAdded, with: { (snapshot: DataSnapshot) in
             let groups = snapshot.value as! [String: Any]
             
             self.tasks = groups
