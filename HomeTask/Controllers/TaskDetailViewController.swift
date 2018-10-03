@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseAuthUI
+import FirebaseGoogleAuthUI
 
 class TaskDetailViewController: UIViewController {
 
@@ -14,6 +17,9 @@ class TaskDetailViewController: UIViewController {
     
     var name: String?
     var dueDate: Date?
+    var taskDescriptionText: String?
+    var ref: DatabaseReference!
+    var email: String?
     
     @IBOutlet weak var taskPicture: UIImageView!
     @IBOutlet weak var taskTitle: UITextField!
@@ -45,11 +51,16 @@ class TaskDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        taskDescription.layer.borderWidth = 2
+        
         // Do any additional setup after loading the view.
+        taskDescription.layer.borderWidth = 2
+        taskDescription.delegate = self
 
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        addTask()
+    }
 
     /*
     // MARK: - Navigation
@@ -61,6 +72,21 @@ class TaskDetailViewController: UIViewController {
     }
     */
     
-    
+    func addTask() {
+        let familyId = Utils.getHash(email!)
+        let mdata = [
+            Constants.TasksFields.title: taskDescriptionText,
+            Constants.TasksFields.assignee: name,
+            Constants.TasksFields.due: dueDate?.description
+        ]
+        
+        ref.child("tasks").child(familyId).childByAutoId().setValue(mdata)
+    }
 
+}
+
+extension TaskDetailViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        taskDescriptionText = textView.text
+    }
 }

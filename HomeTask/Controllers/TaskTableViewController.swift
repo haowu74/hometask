@@ -13,7 +13,7 @@ import FirebaseGoogleAuthUI
 
 class TaskTableViewController: UITableViewController {
     
-    var tasks: [DataSnapshot]! = []
+    var tasks: [String: Any]! = [:]
     var ref: DatabaseReference!
     var storageRef: StorageReference!
     fileprivate var _refHandle: DatabaseHandle!
@@ -21,6 +21,7 @@ class TaskTableViewController: UITableViewController {
     var familyExisting = false
     
     var email: String?
+    
     
     @IBAction func config(_ sender: Any) {
         self.performSegue(withIdentifier: "configuration", sender: nil)
@@ -34,10 +35,14 @@ class TaskTableViewController: UITableViewController {
     
     
     func configureDatabase() {
+        let familyId = Utils.getHash(email!)
         ref = Database.database().reference()
         _refHandle = ref.child("tasks").observe(.childAdded, with: { (snapshot: DataSnapshot) in
-            self.tasks.append(snapshot)
-            self.tableView.insertRows(at: [IndexPath(row: self.tasks.count - 1, section: 0)], with: .automatic)
+            let groups = snapshot.value as! [String: Any]
+            
+            self.tasks = groups
+            self.tableView.reloadData()
+            //self.tableView.insertRows(at: [IndexPath(row: self.tasks.count, section: 0)], with: .automatic)
             //self.scrollToBottomMessage()
         })
     }
@@ -60,6 +65,8 @@ class TaskTableViewController: UITableViewController {
         configureStorage()
         
         getFamilyMember()
+        
+        self.tableView.reloadData()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -76,7 +83,7 @@ class TaskTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -84,15 +91,20 @@ class TaskTableViewController: UITableViewController {
         return tasks.count
     }
 
-    /*
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! TaskTableViewCell
 
-        // Configure the cell...
-
+        let task = Array(tasks)[indexPath.row].value as! [String: String]
+        let title = task[Constants.TasksFields.title] ?? "[title]"
+        let due = task[Constants.TasksFields.due] ?? "[now]"
+        
+        cell.taskTitle.text = title
+        cell.taskDue.text = due
+        
         return cell
     }
-    */
+    
 
     /*
     // Override to support conditional editing of the table view.
@@ -157,6 +169,11 @@ class TaskTableViewController: UITableViewController {
             configurationViewController.email = email
             configurationViewController.ref = ref
             configurationViewController.familyExisting = familyExisting
+        }
+        else if segue.identifier == "taskDetail" {
+            let taskDetailViewController = segue.destination as! TaskDetailViewController
+            taskDetailViewController.ref = ref
+            taskDetailViewController.email = email
         }
     }
 
