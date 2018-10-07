@@ -100,7 +100,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6fw-ut-Nhx">
+                            <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="photo-placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="6fw-ut-Nhx">
                                 <rect key="frame" x="16" y="79" width="151" height="136"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
@@ -152,7 +152,7 @@
                         <outlet property="taskPicture" destination="6fw-ut-Nhx" id="jZ4-ZB-CIn"/>
                         <outlet property="taskTitle" destination="Q6G-hs-jQl" id="kOp-nF-TSX"/>
                         <segue destination="cQ5-RV-Edo" kind="show" identifier="taskAssigneeDue" id="qtl-Ns-3AZ"/>
-                        <segue destination="el1-Sk-L0F" kind="show" id="hNA-7t-hzZ"/>
+                        <segue destination="el1-Sk-L0F" kind="show" identifier="photoSelection" id="hNA-7t-hzZ"/>
                         <segue destination="dZw-8h-JJX" kind="unwind" identifier="unwindFromTaskDetail" unwindAction="unwindFromTaskDetailViewControllerWithSegue:" id="2qo-ja-snl"/>
                     </connections>
                 </viewController>
@@ -333,4 +333,7 @@
             <point key="canvasLocation" x="942" y="41"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="photo-placeholder" width="1000" height="667"/>
+    </resources>
 </document>

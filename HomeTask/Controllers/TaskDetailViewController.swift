@@ -60,6 +60,10 @@ class TaskDetailViewController: UIViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(tapGestureRecognizer:)))
+        taskPicture.addGestureRecognizer(tapGestureRecognizer)
+        taskPicture.isUserInteractionEnabled = true
+        
         taskDescription.layer.borderWidth = 2
         taskDescription.delegate = self
         
@@ -121,6 +125,14 @@ class TaskDetailViewController: UIViewController {
         ]
         let taskUpdate = ["/tasks/\(familyId)/\(taskId!)": mdata]
         ref.updateChildValues(taskUpdate)
+    }
+    
+    @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer)
+    {
+        //let tappedImage = tapGestureRecognizer.view as! UIImageView
+        
+        // Your action
+        performSegue(withIdentifier: "photoSelection", sender: nil)
     }
 }
 
