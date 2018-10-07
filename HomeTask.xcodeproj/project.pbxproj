@@ -20,6 +20,7 @@
 		28490F1C21469B0900813AB1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 28490F1A21469B0900813AB1 /* LaunchScreen.storyboard */; };
 		28490F2421469B5600813AB1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 28490F2321469B5600813AB1 /* GoogleService-Info.plist */; };
 		28490F262146A6D500813AB1 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28490F252146A6D500813AB1 /* LoginViewController.swift */; };
+		284DBAF62169CD430061CB3B /* DateFormatType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 284DBAF52169CD430061CB3B /* DateFormatType.swift */; };
 		285888732160B89E00394C64 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285888722160B89E00394C64 /* Task.swift */; };
 		2885628F215A5AC100477B54 /* TaskTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2885628E215A5AC000477B54 /* TaskTableViewController.swift */; };
 		288571AE215F0395008A89D8 /* TaskDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288571AD215F0395008A89D8 /* TaskDetailViewController.swift */; };
@@ -44,6 +45,7 @@
 		28490F1D21469B0900813AB1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		28490F2321469B5600813AB1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		28490F252146A6D500813AB1 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		284DBAF52169CD430061CB3B /* DateFormatType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatType.swift; sourceTree = "<group>"; };
 		285888722160B89E00394C64 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		2885628E215A5AC000477B54 /* TaskTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTableViewController.swift; sourceTree = "<group>"; };
 		288571AD215F0395008A89D8 /* TaskDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailViewController.swift; sourceTree = "<group>"; };
@@ -113,8 +115,8 @@
 		288571AC215F0348008A89D8 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				2885628E215A5AC000477B54 /* TaskTableViewController.swift */,
 				28490F252146A6D500813AB1 /* LoginViewController.swift */,
+				2885628E215A5AC000477B54 /* TaskTableViewController.swift */,
 				288571AD215F0395008A89D8 /* TaskDetailViewController.swift */,
 				28068C06215F0E0C00008C92 /* TaskAssignViewController.swift */,
 				28068C08215F0FD000008C92 /* ConfigurationViewController.swift */,
@@ -138,6 +140,7 @@
 				288571B1215F0496008A89D8 /* Constants.swift */,
 				28068C0C215FB0B500008C92 /* Family.swift */,
 				285888722160B89E00394C64 /* Task.swift */,
+				284DBAF52169CD430061CB3B /* DateFormatType.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -327,6 +330,7 @@
 				28068C07215F0E0C00008C92 /* TaskAssignViewController.swift in Sources */,
 				288571AE215F0395008A89D8 /* TaskDetailViewController.swift in Sources */,
 				28490F262146A6D500813AB1 /* LoginViewController.swift in Sources */,
+				284DBAF62169CD430061CB3B /* DateFormatType.swift in Sources */,
 				28490F1121469B0800813AB1 /* ViewController.swift in Sources */,
 				28068C0D215FB0B600008C92 /* Family.swift in Sources */,
 				2885628F215A5AC100477B54 /* TaskTableViewController.swift in Sources */,

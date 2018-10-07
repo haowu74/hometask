@@ -16,7 +16,8 @@ class LoginViewController: UIViewController {
     
     // MARK: Properties
     
-
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    
     var user: User?
     fileprivate var _refHandle: DatabaseHandle!
     fileprivate var _authHandle: AuthStateDidChangeListenerHandle!
@@ -135,6 +136,9 @@ class LoginViewController: UIViewController {
             //let photoAlbumViewController = segue.destination as! NavViewController
             let taskTableViewController = (segue.destination as! UINavigationController).childViewControllers[0] as! TaskTableViewController
             taskTableViewController.email = user?.email
+            if let user = UserDefaults.standard.string(forKey: "user") {
+                appDelegate.user = user
+            }
         }
     }
 

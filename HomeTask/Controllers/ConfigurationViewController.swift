@@ -51,6 +51,7 @@ class ConfigurationViewController: UIViewController {
         familyMemberList.delegate = self
         familyMemberList.dataSource = self
         familyMemberList.layer.borderWidth = 1
+        fullName.text = appDelegate.user
     }
     
 
@@ -127,6 +128,8 @@ extension ConfigurationViewController: UIPickerViewDelegate, UIPickerViewDataSou
         if row < appDelegate.family.names.count {
             selectedMemberIdx = row + 1
             fullName.text = appDelegate.family.names[row]
+            UserDefaults.standard.set(fullName.text, forKey: "user")
+            appDelegate.user = fullName.text
         }
         else {
             selectedMemberIdx = 0

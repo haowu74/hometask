@@ -19,7 +19,6 @@ class TaskTableViewController: UITableViewController {
     fileprivate var _refHandle: DatabaseHandle!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var familyExisting = false
-    
     var email: String?
     
     
@@ -30,34 +29,20 @@ class TaskTableViewController: UITableViewController {
 
     
     @IBAction func addNewTask(_ sender: UIBarButtonItem) {
-        self.performSegue(withIdentifier: "taskDetail", sender: nil)
+        self.performSegue(withIdentifier: "taskDetail", sender: sender)
     }
     
+    @IBAction func unwindFromTaskDetailViewController(segue: UIStoryboardSegue) {
+        
+    }
     
     func configureDatabase() {
-        let familyId = Utils.getHash(email!)
         ref = Database.database().reference()
-        _refHandle = ref.child("tasks").queryOrderedByKey().queryEqual(toValue: familyId).observe(.childAdded, with: { (snapshot: DataSnapshot) in
-            let groups = snapshot.value as! [String: Any]
-            
-            self.tasks = groups
-            self.tableView.reloadData()
-            //self.tableView.insertRows(at: [IndexPath(row: self.tasks.count, section: 0)], with: .automatic)
-            //self.scrollToBottomMessage()
-        })
     }
     
     func configureStorage() {
         storageRef = Storage.storage().reference()
     }
-    
-    /*
-    func sendTask(data: [String:String]) {
-        var mdata = data
-        mdata[Constants.MessageFields.name] = displayName
-        ref.child("task").childByAutoId().setValue(mdata)
-    }
- */
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,12 +51,33 @@ class TaskTableViewController: UITableViewController {
         
         getFamilyMember()
         
-        self.tableView.reloadData()
+        /*
+        let familyId = Utils.getHash(email!)
+        _refHandle = ref.child("tasks").queryOrderedByKey().queryEqual(toValue: familyId).observe(.childAdded, with: { (snapshot: DataSnapshot) in
+            let groups = snapshot.value as! [String: Any]
+            
+            self.tasks = groups
+            self.tableView.reloadData()
+
+        })
+        */
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        let familyId = Utils.getHash(email!)
+        _refHandle = ref.child("tasks").queryOrderedByKey().queryEqual(toValue: familyId).observe(.childAdded, with: { (snapshot: DataSnapshot) in
+            let groups = snapshot.value as! [String: Any]
+            
+            self.tasks = groups
+            self.tableView.reloadData()
+
+        })
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -94,7 +100,7 @@ class TaskTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! TaskTableViewCell
-
+        
         let task = Array(tasks)[indexPath.row].value as! [String: String]
         let title = task[Constants.TasksFields.title] ?? "[title]"
         let due = task[Constants.TasksFields.due] ?? "[now]"
@@ -105,7 +111,9 @@ class TaskTableViewController: UITableViewController {
         return cell
     }
     
-
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.performSegue(withIdentifier: "taskDetail", sender: nil)
+    }
     /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -174,6 +182,24 @@ class TaskTableViewController: UITableViewController {
             let taskDetailViewController = segue.destination as! TaskDetailViewController
             taskDetailViewController.ref = ref
             taskDetailViewController.email = email
+            
+            if !(sender is UIBarButtonItem) {
+                // View / Update exiting task
+                let index = self.tableView.indexPathForSelectedRow?.row
+                let task = Array(tasks)[index!].value as! [String: String]
+                let taskId = Array(tasks)[index!].key
+                taskDetailViewController.taskTitleText = task[Constants.TasksFields.title]
+                taskDetailViewController.taskDescriptionText = task[Constants.TasksFields.description]
+                taskDetailViewController.dueDate = Utils.convertToDate(dateString: (task[Constants.TasksFields.due]?.components(separatedBy: " ")[0])!)
+                taskDetailViewController.name = task[Constants.TasksFields.assignee]
+                taskDetailViewController.existTask = true
+                taskDetailViewController.taskId = taskId
+            }
+            else {
+                // New Task
+                taskDetailViewController.existTask = false
+                
+            }
         }
     }
 

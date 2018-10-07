@@ -22,4 +22,24 @@ class Utils {
         }
         return digestData.map { String(format: "%02hhx", $0) }.joined()
     }
+    
+    /// Convert String to Date
+    public static func convertToDate(dateString: String) -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = DateFormatType.date.rawValue // Your date format
+        let serverDate: Date = dateFormatter.date(from: dateString)! // according to date format your date string
+        return serverDate
+    }
+    
+    /// Convert Date to String
+    public static func convertToString(date: Date, dateformat formatType: DateFormatType) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = formatType.rawValue // Your New Date format as per requirement change it own
+        
+        let newDate: String = dateFormatter.string(from: date) // pass Date here
+        print(newDate) // New formatted Date string
+        
+        return newDate
+    }
+    
 }

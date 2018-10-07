@@ -117,6 +117,9 @@
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <action selector="editTaskTitle:" destination="BdF-GB-AXP" eventType="editingDidEnd" id="GFp-N3-Tyg"/>
+                                </connections>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Assign To" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="GsJ-hk-s1X">
                                 <rect key="frame" x="16" y="450" width="343" height="30"/>
@@ -150,9 +153,11 @@
                         <outlet property="taskTitle" destination="Q6G-hs-jQl" id="kOp-nF-TSX"/>
                         <segue destination="cQ5-RV-Edo" kind="show" identifier="taskAssigneeDue" id="qtl-Ns-3AZ"/>
                         <segue destination="el1-Sk-L0F" kind="show" id="hNA-7t-hzZ"/>
+                        <segue destination="dZw-8h-JJX" kind="unwind" identifier="unwindFromTaskDetail" unwindAction="unwindFromTaskDetailViewControllerWithSegue:" id="2qo-ja-snl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6am-tK-6uf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="dZw-8h-JJX" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="2637.5999999999999" y="40.929535232383813"/>
         </scene>
