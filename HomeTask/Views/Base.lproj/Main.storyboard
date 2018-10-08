@@ -240,13 +240,20 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="qfV-dz-KMd"/>
-                                    <barButtonItem style="plain" systemItem="camera" id="2C3-C0-Kzt"/>
+                                    <barButtonItem style="plain" systemItem="camera" id="2C3-C0-Kzt">
+                                        <connections>
+                                            <action selector="cameraSelected:" destination="el1-Sk-L0F" id="9sh-4M-M3x"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="Pup-Yr-6OW"/>
                                     <barButtonItem style="plain" id="naf-bc-zVB">
                                         <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Nac-pN-LhP">
                                             <rect key="frame" x="224" y="7" width="46" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <state key="normal" title="Album"/>
+                                            <connections>
+                                                <action selector="albumSelected:" destination="el1-Sk-L0F" eventType="touchUpInside" id="81h-wS-8B9"/>
+                                            </connections>
                                         </button>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="otd-uJ-BJw"/>
@@ -260,8 +267,13 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="Tvf-Jh-6WT"/>
                     </view>
+                    <connections>
+                        <outlet property="photo" destination="L2e-p1-vfP" id="Cnl-QJ-Vs2"/>
+                        <segue destination="3j4-oQ-csL" kind="unwind" identifier="unwindFromPhotoPickerViewController" unwindAction="unwindFromPhotoPickerViewControllerWithSegue:" id="LDE-6d-k05"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uHL-6M-tCF" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="3j4-oQ-csL" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="2638" y="824"/>
         </scene>

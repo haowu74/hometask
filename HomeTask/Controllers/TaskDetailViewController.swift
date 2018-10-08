@@ -56,6 +56,11 @@ class TaskDetailViewController: UIViewController {
         }
     }
     
+    @IBAction func unwindFromPhotoPickerViewController(segue: UIStoryboardSegue) {
+        let photoPickerViewController = segue.source as! PhotoPickerViewController
+        taskPicture.image = photoPickerViewController.photo.image
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
