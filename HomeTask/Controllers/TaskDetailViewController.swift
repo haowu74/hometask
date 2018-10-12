@@ -20,9 +20,11 @@ class TaskDetailViewController: UIViewController {
     var taskDescriptionText: String?
     var taskTitleText: String?
     var ref: DatabaseReference!
+    var storageRef: StorageReference!
     var email: String?
     var taskId: String?
     var existTask: Bool?
+    var imageUrl: String?
     
     @IBOutlet weak var taskPicture: UIImageView!
     @IBOutlet weak var taskTitle: UITextField!
@@ -96,6 +98,21 @@ class TaskDetailViewController: UIViewController {
             taskAssignee.text = assignee
         }
 
+        if let imageUrl = self.imageUrl {
+            storageRef!.child(imageUrl).getData(maxSize: INT64_MAX) { (data, error) in
+                guard error == nil else {
+                    print("error downloading: \(error!)")
+                    return
+                }
+                let image = UIImage.init(data: data!, scale: 50)
+
+                DispatchQueue.main.async {
+                    self.taskPicture.image = image
+                }
+                
+            }
+        }
+
     }
     
     @objc func back(sender: UIBarButtonItem) {
@@ -110,11 +127,13 @@ class TaskDetailViewController: UIViewController {
     
     func addTask() {
         let familyId = Utils.getHash(email!)
+        let imagePath = updateImage(familyId)
         let mdata = [
             Constants.TasksFields.title: taskTitle.text,
             Constants.TasksFields.description: taskDescription.text,
             Constants.TasksFields.assignee: taskAssignee.text,
-            Constants.TasksFields.due: taskDueDate.text
+            Constants.TasksFields.due: taskDueDate.text,
+            Constants.TasksFields.imageUrl: imagePath
         ]
         
         ref.child("tasks").child(familyId).childByAutoId().setValue(mdata)
@@ -122,14 +141,29 @@ class TaskDetailViewController: UIViewController {
 
     func updateTask() {
         let familyId = Utils.getHash(email!)
+        let imagePath = updateImage(familyId)
+        
         let mdata = [
             Constants.TasksFields.title: taskTitle.text,
             Constants.TasksFields.description: taskDescription.text,
             Constants.TasksFields.assignee: taskAssignee.text,
-            Constants.TasksFields.due: taskDueDate.text
+            Constants.TasksFields.due: taskDueDate.text,
+            Constants.TasksFields.imageUrl: imagePath
         ]
         let taskUpdate = ["/tasks/\(familyId)/\(taskId!)": mdata]
         ref.updateChildValues(taskUpdate)
+    }
+    
+    func updateImage(_ familyId: String) -> String? {
+        let imagePath = "chat_photos/\(familyId)/\(taskId!).jpg"
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+        if let image = taskPicture.image {
+            let photoData = UIImageJPEGRepresentation(image, 0.8)
+            self.storageRef!.child(imagePath).putData(photoData!, metadata: metadata)
+            return imagePath
+        }
+        return nil
     }
     
     @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer)

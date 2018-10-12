@@ -182,6 +182,7 @@ class TaskTableViewController: UITableViewController {
             let taskDetailViewController = segue.destination as! TaskDetailViewController
             taskDetailViewController.ref = ref
             taskDetailViewController.email = email
+            taskDetailViewController.storageRef = storageRef
             
             if !(sender is UIBarButtonItem) {
                 // View / Update exiting task
@@ -194,6 +195,10 @@ class TaskTableViewController: UITableViewController {
                 taskDetailViewController.name = task[Constants.TasksFields.assignee]
                 taskDetailViewController.existTask = true
                 taskDetailViewController.taskId = taskId
+                
+                if let imageUrl = task[Constants.TasksFields.imageUrl] {
+                    taskDetailViewController.imageUrl = imageUrl
+                }
             }
             else {
                 // New Task
