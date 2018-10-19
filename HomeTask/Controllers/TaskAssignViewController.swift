@@ -32,9 +32,19 @@ class TaskAssignViewController: UIViewController, UIPickerViewDelegate, UIPicker
         // Do any additional setup after loading the view.
         familyMemberList.delegate = self
         familyMemberList.dataSource = self
-        name = appDelegate.family.names[0]
-        familyMemberList.selectRow(0, inComponent: 0, animated: false)
-        dueDate = Date()
+        if dueDate == nil {
+            dueDate = Date()
+        }
+        if name == nil {
+            name = appDelegate.family.names[0]
+        }
+        let index =  appDelegate.family.names.firstIndex(of: name!)
+        if let index = index {
+            familyMemberList.selectRow(index, inComponent: 0, animated: false)
+        } else {
+            familyMemberList.selectRow(0, inComponent: 0, animated: false)
+        }
+    
         dueDatePicker.setDate(dueDate!, animated: false)
     }
     

@@ -127,6 +127,8 @@ class TaskDetailViewController: UIViewController {
     
     func addTask() {
         let familyId = Utils.getHash(email!)
+        let reference = ref.child("tasks").child(familyId).childByAutoId()
+        taskId = reference.key
         let imagePath = updateImage(familyId)
         let mdata = [
             Constants.TasksFields.title: taskTitle.text,
@@ -135,8 +137,7 @@ class TaskDetailViewController: UIViewController {
             Constants.TasksFields.due: taskDueDate.text,
             Constants.TasksFields.imageUrl: imagePath
         ]
-        
-        ref.child("tasks").child(familyId).childByAutoId().setValue(mdata)
+        reference.setValue(mdata)
     }
 
     func updateTask() {
@@ -172,6 +173,16 @@ class TaskDetailViewController: UIViewController {
         
         // Your action
         performSegue(withIdentifier: "photoSelection", sender: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
+        if segue.identifier == "taskAssigneeDue" {
+            let taskAssignViewController = segue.destination as! TaskAssignViewController
+            taskAssignViewController.name = name
+            taskAssignViewController.dueDate = dueDate
+        }
     }
 }
 

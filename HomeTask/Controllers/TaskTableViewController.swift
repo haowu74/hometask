@@ -13,7 +13,7 @@ import FirebaseGoogleAuthUI
 
 class TaskTableViewController: UITableViewController {
     
-    var tasks: [String: Any]! = [:]
+    var tasks: [(key: String, value: Any)]! = []
     var ref: DatabaseReference!
     var storageRef: StorageReference!
     fileprivate var _refHandle: DatabaseHandle!
@@ -73,7 +73,8 @@ class TaskTableViewController: UITableViewController {
         _refHandle = ref.child("tasks").queryOrderedByKey().queryEqual(toValue: familyId).observe(.childAdded, with: { (snapshot: DataSnapshot) in
             let groups = snapshot.value as! [String: Any]
             
-            self.tasks = groups
+            let sortedGroup = groups.sorted(by: self.sortTasks)
+            self.tasks = sortedGroup
             self.tableView.reloadData()
 
         })
@@ -206,6 +207,14 @@ class TaskTableViewController: UITableViewController {
                 
             }
         }
+    }
+    
+    private func sortTasks(task1: (key: String, value: Any), task2: (key: String, value: Any)) -> Bool {
+        let t1 = task1.value as! [String: String]
+        let t2 = task2.value as! [String: String]
+        let due1 = Utils.convertToDate(dateString: (t1[Constants.TasksFields.due]?.components(separatedBy: " ")[0])!)
+        let due2 = Utils.convertToDate(dateString: (t2[Constants.TasksFields.due]?.components(separatedBy: " ")[0])!)
+        return due1 < due2
     }
 
 }
