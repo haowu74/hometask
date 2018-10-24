@@ -25,12 +25,14 @@ class TaskDetailViewController: UIViewController {
     var taskId: String?
     var existTask: Bool?
     var imageUrl: String?
+    var completed: Bool?
     
     @IBOutlet weak var taskPicture: UIImageView!
     @IBOutlet weak var taskTitle: UITextField!
     @IBOutlet weak var taskDescription: UITextView!
     @IBOutlet weak var taskAssignee: UITextField!
     @IBOutlet weak var taskDueDate: UITextField!
+    @IBOutlet weak var taskCompleted: UISegmentedControl!
     
     @IBAction func editTaskAssignee(_ sender: Any) {
         self.performSegue(withIdentifier: "taskAssigneeDue", sender: nil)
@@ -61,6 +63,15 @@ class TaskDetailViewController: UIViewController {
     @IBAction func unwindFromPhotoPickerViewController(segue: UIStoryboardSegue) {
         let photoPickerViewController = segue.source as! PhotoPickerViewController
         taskPicture.image = photoPickerViewController.photo.image
+    }
+    
+    @IBAction func completeStateChanged(_ sender: Any) {
+        let taskCompletedState = sender as! UISegmentedControl
+        if taskCompletedState.selectedSegmentIndex == 0 {
+            completed = false
+        } else {
+            completed = true
+        }
     }
     
     override func viewDidLoad() {
@@ -112,6 +123,10 @@ class TaskDetailViewController: UIViewController {
                 
             }
         }
+        
+        if let completed = completed {
+            taskCompleted.selectedSegmentIndex = completed ? 1 : 0;
+        }
 
     }
     
@@ -130,12 +145,19 @@ class TaskDetailViewController: UIViewController {
         let reference = ref.child("tasks").child(familyId).childByAutoId()
         taskId = reference.key
         let imagePath = updateImage(familyId)
+        let completedStr = completed ?? false ? "true" : "false"
+        let title = taskTitle.text
+        let description = taskDescription.text
+        let assignee = taskAssignee.text
+        let due = taskDueDate.text
         let mdata = [
-            Constants.TasksFields.title: taskTitle.text,
-            Constants.TasksFields.description: taskDescription.text,
-            Constants.TasksFields.assignee: taskAssignee.text,
-            Constants.TasksFields.due: taskDueDate.text,
-            Constants.TasksFields.imageUrl: imagePath
+            Constants.TasksFields.completed: completedStr,
+            Constants.TasksFields.title: title,
+            Constants.TasksFields.description: description,
+            Constants.TasksFields.assignee: assignee,
+            Constants.TasksFields.due: due,
+            Constants.TasksFields.imageUrl: imagePath,
+            Constants.TasksFields.completed: completedStr
         ]
         reference.setValue(mdata)
     }
@@ -143,13 +165,18 @@ class TaskDetailViewController: UIViewController {
     func updateTask() {
         let familyId = Utils.getHash(email!)
         let imagePath = updateImage(familyId)
-        
+        let completedStr = completed ?? false ? "true" : "false"
+        let title = taskTitle.text
+        let description = taskDescription.text
+        let assignee = taskAssignee.text
+        let due = taskDueDate.text
         let mdata = [
-            Constants.TasksFields.title: taskTitle.text,
-            Constants.TasksFields.description: taskDescription.text,
-            Constants.TasksFields.assignee: taskAssignee.text,
-            Constants.TasksFields.due: taskDueDate.text,
-            Constants.TasksFields.imageUrl: imagePath
+            Constants.TasksFields.title: title,
+            Constants.TasksFields.description: description,
+            Constants.TasksFields.assignee: assignee,
+            Constants.TasksFields.due: due,
+            Constants.TasksFields.imageUrl: imagePath,
+            Constants.TasksFields.completed: completedStr
         ]
         let taskUpdate = ["/tasks/\(familyId)/\(taskId!)": mdata]
         ref.updateChildValues(taskUpdate)

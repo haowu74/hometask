@@ -102,21 +102,10 @@ class LoginViewController: UIViewController {
     }
     
     func signedInStatus(isSignedIn: Bool) {
-        //signInButton.isHidden = isSignedIn
-        //signOutButton.isHidden = !isSignedIn
-        //messagesTable.isHidden = !isSignedIn
-        //messageTextField.isHidden = !isSignedIn
-        //sendButton.isHidden = !isSignedIn
-        //imageMessage.isHidden = !isSignedIn
+
         
         if (isSignedIn) {
-            
-            // remove background blur (will use when showing image messages)
-            //messagesTable.rowHeight = UITableViewAutomaticDimension
-            //messagesTable.estimatedRowHeight = 122.0
-            //backgroundBlur.effect = nil
-            //messageTextField.delegate = self
-            
+                
 
         }
     }

@@ -164,6 +164,7 @@ class TaskTableViewController: UITableViewController {
             else{
                 self.familyExisting = false
             }
+            
         }
     }
     
@@ -196,6 +197,7 @@ class TaskTableViewController: UITableViewController {
                 taskDetailViewController.name = task[Constants.TasksFields.assignee]
                 taskDetailViewController.existTask = true
                 taskDetailViewController.taskId = taskId
+                taskDetailViewController.completed = task[Constants.TasksFields.completed] == "true"
                 
                 if let imageUrl = task[Constants.TasksFields.imageUrl] {
                     taskDetailViewController.imageUrl = imageUrl

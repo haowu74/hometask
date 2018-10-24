@@ -16,4 +16,5 @@ struct Task {
     var completion: Bool?
     var picture: UIImage?
     var pictureUrl: String?
+    var completed: Bool
 }

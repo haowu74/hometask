@@ -25,6 +25,7 @@ struct Constants {
         static let assignee = "assignee"
         static let due = "due"
         static let imageUrl = "photoUrl"
+        static let completed = "completed"
     }
     
     struct FamilyFields {
