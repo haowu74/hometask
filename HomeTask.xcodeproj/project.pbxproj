@@ -22,6 +22,7 @@
 		28490F262146A6D500813AB1 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28490F252146A6D500813AB1 /* LoginViewController.swift */; };
 		284DBAF62169CD430061CB3B /* DateFormatType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 284DBAF52169CD430061CB3B /* DateFormatType.swift */; };
 		285888732160B89E00394C64 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285888722160B89E00394C64 /* Task.swift */; };
+		285BEF9F2181C5D90064A9B6 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285BEF9E2181C5D90064A9B6 /* DataController.swift */; };
 		2885628F215A5AC100477B54 /* TaskTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2885628E215A5AC000477B54 /* TaskTableViewController.swift */; };
 		288571AE215F0395008A89D8 /* TaskDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288571AD215F0395008A89D8 /* TaskDetailViewController.swift */; };
 		288571B2215F0496008A89D8 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288571B1215F0496008A89D8 /* Constants.swift */; };
@@ -47,6 +48,7 @@
 		28490F252146A6D500813AB1 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		284DBAF52169CD430061CB3B /* DateFormatType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatType.swift; sourceTree = "<group>"; };
 		285888722160B89E00394C64 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
+		285BEF9E2181C5D90064A9B6 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		2885628E215A5AC000477B54 /* TaskTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTableViewController.swift; sourceTree = "<group>"; };
 		288571AD215F0395008A89D8 /* TaskDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailViewController.swift; sourceTree = "<group>"; };
 		288571B1215F0496008A89D8 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -107,7 +109,6 @@
 				28490F1821469B0900813AB1 /* Assets.xcassets */,
 				28490F1A21469B0900813AB1 /* LaunchScreen.storyboard */,
 				28490F1D21469B0900813AB1 /* Info.plist */,
-				28490F1521469B0800813AB1 /* HomeTask.xcdatamodeld */,
 			);
 			path = HomeTask;
 			sourceTree = "<group>";
@@ -137,10 +138,12 @@
 		288571B0215F0485008A89D8 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				28490F1521469B0800813AB1 /* HomeTask.xcdatamodeld */,
 				288571B1215F0496008A89D8 /* Constants.swift */,
 				28068C0C215FB0B500008C92 /* Family.swift */,
 				285888722160B89E00394C64 /* Task.swift */,
 				284DBAF52169CD430061CB3B /* DateFormatType.swift */,
+				285BEF9E2181C5D90064A9B6 /* DataController.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -339,6 +342,7 @@
 				285888732160B89E00394C64 /* Task.swift in Sources */,
 				288571B2215F0496008A89D8 /* Constants.swift in Sources */,
 				28490F0F21469B0800813AB1 /* AppDelegate.swift in Sources */,
+				285BEF9F2181C5D90064A9B6 /* DataController.swift in Sources */,
 				28490F1721469B0800813AB1 /* HomeTask.xcdatamodeld in Sources */,
 				28068C10215FC17F00008C92 /* Utils.swift in Sources */,
 			);

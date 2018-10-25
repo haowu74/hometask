@@ -10,8 +10,9 @@ import UIKit
 import Firebase
 import FirebaseAuthUI
 import FirebaseGoogleAuthUI
+import CoreData
 
-class TaskDetailViewController: UIViewController {
+class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDelegate {
 
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
@@ -26,6 +27,10 @@ class TaskDetailViewController: UIViewController {
     var existTask: Bool?
     var imageUrl: String?
     var completed: Bool?
+    var familyId: String?
+    var photosFetchedResultsController: NSFetchedResultsController<Photo>!
+    var dataController: DataController!
+    var connected: Bool!
     
     @IBOutlet weak var taskPicture: UIImageView!
     @IBOutlet weak var taskTitle: UITextField!
@@ -76,7 +81,9 @@ class TaskDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        familyId = Utils.getHash(email!)
+        dataController = appDelegate.dataController
+        setupFetchedResultsController()
         // Do any additional setup after loading the view.
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(tapGestureRecognizer:)))
         taskPicture.addGestureRecognizer(tapGestureRecognizer)
@@ -109,20 +116,43 @@ class TaskDetailViewController: UIViewController {
             taskAssignee.text = assignee
         }
 
-        if let imageUrl = self.imageUrl {
-            storageRef!.child(imageUrl).getData(maxSize: INT64_MAX) { (data, error) in
-                guard error == nil else {
-                    print("error downloading: \(error!)")
-                    return
+        let connectedRef = Database.database().reference(withPath: ".info/connected")
+        connectedRef.observe(.value, with: { snapshot in
+            if snapshot.value as? Bool ?? false {
+                self.connected = true
+                print("Connected")
+            } else {
+                self.connected = false
+                print("Not connected")
+            }
+        })
+        
+        if connected {
+            if let imageUrl = self.imageUrl {
+                storageRef!.child(imageUrl).getData(maxSize: INT64_MAX) { (data, error) in
+                    guard error == nil else {
+                        print("error downloading: \(error!)")
+                        return
+                    }
+                    let image = UIImage.init(data: data!, scale: 50)
+                    
+                    DispatchQueue.main.async {
+                        self.taskPicture.image = image
+                    }
+                    
                 }
-                let image = UIImage.init(data: data!, scale: 50)
-
-                DispatchQueue.main.async {
-                    self.taskPicture.image = image
-                }
-                
             }
         }
+        else {
+            for photo in photosFetchedResultsController.fetchedObjects! {
+                if let image = photo.photo {
+                    DispatchQueue.main.async {
+                        self.taskPicture.image = UIImage(data: image)!
+                    }
+                }
+            }
+        }
+
         
         if let completed = completed {
             taskCompleted.selectedSegmentIndex = completed ? 1 : 0;
@@ -136,15 +166,16 @@ class TaskDetailViewController: UIViewController {
         } else {
             addTask()
         }
+        savePhoto()
         navigationController?.popViewController(animated: true)
     }
     
     
     func addTask() {
-        let familyId = Utils.getHash(email!)
-        let reference = ref.child("tasks").child(familyId).childByAutoId()
+
+        let reference = ref.child("tasks").child(familyId!).childByAutoId()
         taskId = reference.key
-        let imagePath = updateImage(familyId)
+        let imagePath = updateImage(familyId!)
         let completedStr = completed ?? false ? "true" : "false"
         let title = taskTitle.text
         let description = taskDescription.text
@@ -163,8 +194,8 @@ class TaskDetailViewController: UIViewController {
     }
 
     func updateTask() {
-        let familyId = Utils.getHash(email!)
-        let imagePath = updateImage(familyId)
+        
+        let imagePath = updateImage(familyId!)
         let completedStr = completed ?? false ? "true" : "false"
         let title = taskTitle.text
         let description = taskDescription.text
@@ -178,7 +209,7 @@ class TaskDetailViewController: UIViewController {
             Constants.TasksFields.imageUrl: imagePath,
             Constants.TasksFields.completed: completedStr
         ]
-        let taskUpdate = ["/tasks/\(familyId)/\(taskId!)": mdata]
+        let taskUpdate = ["/tasks/\(familyId!)/\(taskId!)": mdata]
         ref.updateChildValues(taskUpdate)
     }
     
@@ -210,6 +241,55 @@ class TaskDetailViewController: UIViewController {
             taskAssignViewController.name = name
             taskAssignViewController.dueDate = dueDate
         }
+    }
+    
+    fileprivate func setupFetchedResultsController() {
+        let fetchRequest:NSFetchRequest<Photo> = Photo.fetchRequest()
+        let predicate = NSPredicate(format: "family == %@ AND task == %@", familyId!, taskId!)
+        //let sortDescriptor = NSSortDescriptor(key: "id", ascending: true)
+        fetchRequest.predicate = predicate
+        fetchRequest.sortDescriptors = []
+        
+        photosFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        photosFetchedResultsController.delegate = self
+        do {
+            try photosFetchedResultsController.performFetch()
+        } catch {
+            fatalError("The fetch could not be performed: \(error.localizedDescription)")
+        }
+    }
+    
+    //Save photo to Core Data
+    private func savePhoto() {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Photo")
+        fetchRequest.predicate = NSPredicate(format: "family == %@ AND task == %@", familyId!, taskId!)
+        
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        do {
+            try dataController.viewContext.execute(deleteRequest)
+        } catch {
+            // TODO: handle the error
+        }
+        
+        let photo = Photo(context: dataController.viewContext)
+        photo.task = taskId
+        photo.family = familyId
+
+        if let image = taskPicture.image {
+            guard let imageData = UIImageJPEGRepresentation(image, 1) else {
+                // handle failed conversion
+                print("jpg error")
+                return
+            }
+            photo.photo = imageData
+            
+            do {
+                try dataController.viewContext.save()
+            } catch {
+                print("Photo Core data save failed")
+            }
+        }
+
     }
 }
 

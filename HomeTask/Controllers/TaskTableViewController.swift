@@ -20,7 +20,7 @@ class TaskTableViewController: UITableViewController {
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var familyExisting = false
     var email: String?
-    
+    var connected = false
     
     @IBAction func config(_ sender: Any) {
         self.performSegue(withIdentifier: "configuration", sender: nil)
@@ -48,6 +48,17 @@ class TaskTableViewController: UITableViewController {
         super.viewDidLoad()
         configureDatabase()
         configureStorage()
+        
+        let connectedRef = Database.database().reference(withPath: ".info/connected")
+        connectedRef.observe(.value, with: { snapshot in
+            if snapshot.value as? Bool ?? false {
+                self.connected = true
+                print("Connected")
+            } else {
+                self.connected = false
+                print("Not connected")
+            }
+        })
         
         getFamilyMember()
         
@@ -198,7 +209,7 @@ class TaskTableViewController: UITableViewController {
                 taskDetailViewController.existTask = true
                 taskDetailViewController.taskId = taskId
                 taskDetailViewController.completed = task[Constants.TasksFields.completed] == "true"
-                
+                taskDetailViewController.connected = connected
                 if let imageUrl = task[Constants.TasksFields.imageUrl] {
                     taskDetailViewController.imageUrl = imageUrl
                 }

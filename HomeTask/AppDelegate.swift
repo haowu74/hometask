@@ -17,11 +17,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var family: Family = Family()
     var window: UIWindow?
     var user: String?
+    let dataController = DataController(modelName: "HomeTask")
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
         Database.database().isPersistenceEnabled = true
+        dataController.load()
         return true
     }
     
