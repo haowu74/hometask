@@ -38,6 +38,7 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
     @IBOutlet weak var taskAssignee: UITextField!
     @IBOutlet weak var taskDueDate: UITextField!
     @IBOutlet weak var taskCompleted: UISegmentedControl!
+    @IBOutlet weak var photoLoading: UIActivityIndicatorView!
     
     @IBAction func editTaskAssignee(_ sender: Any) {
         self.performSegue(withIdentifier: "taskAssigneeDue", sender: nil)
@@ -81,6 +82,10 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        taskPicture.isHidden = true
+        photoLoading.startAnimating()
+        
         familyId = Utils.getHash(email!)
         dataController = appDelegate.dataController
         setupFetchedResultsController()
@@ -138,6 +143,9 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
                     
                     DispatchQueue.main.async {
                         self.taskPicture.image = image
+                        self.photoLoading.stopAnimating()
+                        self.photoLoading.isHidden = true
+                        self.taskPicture.isHidden = false
                     }
                     
                 }
@@ -148,6 +156,9 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
                 if let image = photo.photo {
                     DispatchQueue.main.async {
                         self.taskPicture.image = UIImage(data: image)!
+                        self.photoLoading.stopAnimating()
+                        self.photoLoading.isHidden = true
+                        self.taskPicture.isHidden = false
                     }
                 }
             }

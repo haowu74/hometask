@@ -152,11 +152,16 @@
                                     <action selector="completeStateChanged:" destination="BdF-GB-AXP" eventType="valueChanged" id="77Y-N0-kBZ"/>
                                 </connections>
                             </segmentedControl>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="FHz-ky-Vfa">
+                                <rect key="frame" x="81" y="137" width="20" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="k85-Nv-The"/>
                     </view>
                     <connections>
+                        <outlet property="photoLoading" destination="FHz-ky-Vfa" id="LRZ-ty-OR4"/>
                         <outlet property="taskAssignee" destination="GsJ-hk-s1X" id="Uzh-7p-cEy"/>
                         <outlet property="taskCompleted" destination="g1i-zg-b5y" id="l2L-8Y-p1l"/>
                         <outlet property="taskDescription" destination="bTn-Ff-h3P" id="2lI-Tz-kL1"/>
