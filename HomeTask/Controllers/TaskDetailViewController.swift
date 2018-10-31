@@ -132,7 +132,20 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
             }
         })
         
-        if connected {
+
+        if  photosFetchedResultsController.fetchedObjects?.count ?? 0 > 0 {
+            for photo in photosFetchedResultsController.fetchedObjects! {
+                if let image = photo.photo {
+                    DispatchQueue.main.async {
+                        self.taskPicture.image = UIImage(data: image)!
+                        self.photoLoading.stopAnimating()
+                        self.photoLoading.isHidden = true
+                        self.taskPicture.isHidden = false
+                    }
+                }
+            }
+        }
+        else if connected {
             if let imageUrl = self.imageUrl {
                 storageRef!.child(imageUrl).getData(maxSize: INT64_MAX) { (data, error) in
                     guard error == nil else {
@@ -143,19 +156,6 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
                     
                     DispatchQueue.main.async {
                         self.taskPicture.image = image
-                        self.photoLoading.stopAnimating()
-                        self.photoLoading.isHidden = true
-                        self.taskPicture.isHidden = false
-                    }
-                    
-                }
-            }
-        }
-        else {
-            for photo in photosFetchedResultsController.fetchedObjects! {
-                if let image = photo.photo {
-                    DispatchQueue.main.async {
-                        self.taskPicture.image = UIImage(data: image)!
                         self.photoLoading.stopAnimating()
                         self.photoLoading.isHidden = true
                         self.taskPicture.isHidden = false

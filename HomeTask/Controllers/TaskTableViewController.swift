@@ -117,9 +117,16 @@ class TaskTableViewController: UITableViewController {
         let title = task[Constants.TasksFields.title] ?? "[title]"
         let due = task[Constants.TasksFields.due] ?? "[now]"
         
-        cell.taskTitle.text = title
-        cell.taskDue.text = due
+        let completed = task[Constants.TasksFields.completed] == "true" ? true : false
         
+        let taskTitle = NSMutableAttributedString(string: title)
+        let taskDue = NSMutableAttributedString(string: due)
+        if completed {
+            taskTitle.addAttribute(NSAttributedStringKey.strikethroughStyle, value: 2, range: NSMakeRange(0, taskTitle.length))
+            taskDue.addAttribute(NSAttributedStringKey.strikethroughStyle, value: 2, range: NSMakeRange(0, taskDue.length))
+        }
+        cell.taskTitle.attributedText = taskTitle
+        cell.taskDue.attributedText = taskDue
         return cell
     }
     
