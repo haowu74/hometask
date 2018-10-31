@@ -14,6 +14,7 @@ import FirebaseGoogleAuthUI
 class TaskTableViewController: UITableViewController {
     
     var tasks: [(key: String, value: Any)]! = []
+    var filteredTasks: [(key: String, value: Any)]! = []
     var ref: DatabaseReference!
     var storageRef: StorageReference!
     fileprivate var _refHandle: DatabaseHandle!
@@ -22,11 +23,50 @@ class TaskTableViewController: UITableViewController {
     var email: String?
     var connected = false
     
+    // TableView Display options
+    var showCompletedTask = false
+    var onlyShowMyTask = false
+    var sortByDateAscending = false
+    
     @IBAction func config(_ sender: Any) {
         self.performSegue(withIdentifier: "configuration", sender: nil)
     }
     
-
+    @IBAction func toggleShowingCompletedTasks(_ sender: UIBarButtonItem) {
+        showCompletedTask = !showCompletedTask
+        if showCompletedTask {
+            sender.title = "Hide Completed"
+        }
+        else {
+            sender.title = "Show Completed"
+        }
+        filteredTasks = tasks.filter(filterTasks)
+        tableView.reloadData()
+    }
+    
+    @IBAction func toggleShowingAllTasks(_ sender: UIBarButtonItem) {
+        onlyShowMyTask = !onlyShowMyTask
+        if onlyShowMyTask {
+            sender.title = "All Tasks"
+        }
+        else {
+            sender.title = "Only My Tasks"
+        }
+        filteredTasks = tasks.filter(filterTasks)
+        tableView.reloadData()
+    }
+    
+    @IBAction func sortByDate(_ sender: UIBarButtonItem) {
+        sortByDateAscending = !sortByDateAscending
+        if sortByDateAscending {
+            sender.title = "Latest Up"
+        }
+        else {
+            sender.title = "Earliest Up"
+        }
+        filteredTasks = filteredTasks.sorted(by: sortTasks)
+        tableView.reloadData()
+    }
     
     @IBAction func addNewTask(_ sender: UIBarButtonItem) {
         self.performSegue(withIdentifier: "taskDetail", sender: sender)
@@ -61,6 +101,7 @@ class TaskTableViewController: UITableViewController {
         })
         
         getFamilyMember()
+        self.navigationController?.setToolbarHidden(false, animated: false)
         
         /*
         let familyId = Utils.getHash(email!)
@@ -86,6 +127,7 @@ class TaskTableViewController: UITableViewController {
             
             let sortedGroup = groups.sorted(by: self.sortTasks)
             self.tasks = sortedGroup
+            self.filteredTasks = self.tasks.filter(self.filterTasks)
             self.tableView.reloadData()
 
         })
@@ -106,14 +148,15 @@ class TaskTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return tasks.count
+        
+        return filteredTasks.count
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! TaskTableViewCell
         
-        let task = Array(tasks)[indexPath.row].value as! [String: String]
+        let task = Array(filteredTasks)[indexPath.row].value as! [String: String]
         let title = task[Constants.TasksFields.title] ?? "[title]"
         let due = task[Constants.TasksFields.due] ?? "[now]"
         
@@ -224,7 +267,9 @@ class TaskTableViewController: UITableViewController {
             else {
                 // New Task
                 taskDetailViewController.existTask = false
-                
+                //taskDetailViewController.taskId = 
+                taskDetailViewController.completed = false
+                taskDetailViewController.connected = connected
             }
         }
     }
@@ -234,7 +279,28 @@ class TaskTableViewController: UITableViewController {
         let t2 = task2.value as! [String: String]
         let due1 = Utils.convertToDate(dateString: (t1[Constants.TasksFields.due]?.components(separatedBy: " ")[0])!)
         let due2 = Utils.convertToDate(dateString: (t2[Constants.TasksFields.due]?.components(separatedBy: " ")[0])!)
-        return due1 < due2
+        if sortByDateAscending {
+            return due1 < due2
+        }
+        else {
+            return due1 > due2
+        }
     }
 
+    private func filterTasks(task: (key: String, value: Any)) -> Bool {
+        let t = task.value as! [String: String]
+        let completed = t[Constants.TasksFields.completed]
+        let assignee = t[Constants.TasksFields.assignee]
+        if !showCompletedTask {
+            if completed == "true" {
+                return false
+            }
+        }
+        if onlyShowMyTask {
+            if assignee != appDelegate.user {
+                return false
+            }
+        }
+        return true
+    }
 }

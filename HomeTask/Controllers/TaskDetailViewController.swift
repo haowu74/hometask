@@ -88,7 +88,44 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
         
         familyId = Utils.getHash(email!)
         dataController = appDelegate.dataController
-        setupFetchedResultsController()
+        if taskId != nil {
+            setupFetchedResultsController()
+            if  photosFetchedResultsController.fetchedObjects?.count ?? 0 > 0 {
+                for photo in photosFetchedResultsController.fetchedObjects! {
+                    if let image = photo.photo {
+                        DispatchQueue.main.async {
+                            self.taskPicture.image = UIImage(data: image)!
+                            self.photoLoading.stopAnimating()
+                            self.photoLoading.isHidden = true
+                            self.taskPicture.isHidden = false
+                        }
+                    }
+                }
+            }
+            else if connected {
+                if let imageUrl = self.imageUrl {
+                    storageRef!.child(imageUrl).getData(maxSize: INT64_MAX) { (data, error) in
+                        guard error == nil else {
+                            print("error downloading: \(error!)")
+                            return
+                        }
+                        let image = UIImage.init(data: data!, scale: 50)
+                        
+                        DispatchQueue.main.async {
+                            self.taskPicture.image = image
+                            self.photoLoading.stopAnimating()
+                            self.photoLoading.isHidden = true
+                            self.taskPicture.isHidden = false
+                        }
+                    }
+                }
+            }
+        } else {
+            self.photoLoading.stopAnimating()
+            self.photoLoading.isHidden = true
+            self.taskPicture.isHidden = false
+        }
+        
         // Do any additional setup after loading the view.
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(tapGestureRecognizer:)))
         taskPicture.addGestureRecognizer(tapGestureRecognizer)
@@ -132,39 +169,6 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
             }
         })
         
-
-        if  photosFetchedResultsController.fetchedObjects?.count ?? 0 > 0 {
-            for photo in photosFetchedResultsController.fetchedObjects! {
-                if let image = photo.photo {
-                    DispatchQueue.main.async {
-                        self.taskPicture.image = UIImage(data: image)!
-                        self.photoLoading.stopAnimating()
-                        self.photoLoading.isHidden = true
-                        self.taskPicture.isHidden = false
-                    }
-                }
-            }
-        }
-        else if connected {
-            if let imageUrl = self.imageUrl {
-                storageRef!.child(imageUrl).getData(maxSize: INT64_MAX) { (data, error) in
-                    guard error == nil else {
-                        print("error downloading: \(error!)")
-                        return
-                    }
-                    let image = UIImage.init(data: data!, scale: 50)
-                    
-                    DispatchQueue.main.async {
-                        self.taskPicture.image = image
-                        self.photoLoading.stopAnimating()
-                        self.photoLoading.isHidden = true
-                        self.taskPicture.isHidden = false
-                    }
-                }
-            }
-        }
-
-        
         if let completed = completed {
             taskCompleted.selectedSegmentIndex = completed ? 1 : 0;
         }
@@ -198,8 +202,7 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
             Constants.TasksFields.description: description,
             Constants.TasksFields.assignee: assignee,
             Constants.TasksFields.due: due,
-            Constants.TasksFields.imageUrl: imagePath,
-            Constants.TasksFields.completed: completedStr
+            Constants.TasksFields.imageUrl: imagePath
         ]
         reference.setValue(mdata)
     }

@@ -71,6 +71,25 @@
                             <outlet property="delegate" destination="5di-nD-Zkq" id="sTl-g9-aPg"/>
                         </connections>
                     </tableView>
+                    <toolbarItems>
+                        <barButtonItem title="Hide Completed" id="uKf-qg-e27" userLabel="Hide Show Completed">
+                            <connections>
+                                <action selector="toggleShowingCompletedTasks:" destination="5di-nD-Zkq" id="K5p-WT-sB1"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="S1H-ZA-HTl"/>
+                        <barButtonItem title="Only My Tasks" id="l8F-Bc-2sO" userLabel="Only My Task">
+                            <connections>
+                                <action selector="toggleShowingAllTasks:" destination="5di-nD-Zkq" id="QjA-wd-Y3j"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="xUS-wu-1aX"/>
+                        <barButtonItem title="Latest Up" id="Dci-vd-9ka" userLabel="Sort">
+                            <connections>
+                                <action selector="sortByDate:" destination="5di-nD-Zkq" id="sBQ-e8-few"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
                     <navigationItem key="navigationItem" title="Tasks" id="deY-I3-ww8">
                         <barButtonItem key="leftBarButtonItem" style="plain" systemItem="add" id="z15-6I-5hU">
                             <connections>
@@ -83,6 +102,7 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <segue destination="BdF-GB-AXP" kind="show" identifier="taskDetail" id="hg9-qb-Zv5"/>
                         <segue destination="pNf-hn-PW4" kind="show" identifier="configuration" id="KsK-XB-fFg"/>
@@ -95,7 +115,7 @@
         <!--Task Detail View Controller-->
         <scene sceneID="cHP-Ei-C8r">
             <objects>
-                <viewController id="BdF-GB-AXP" customClass="TaskDetailViewController" customModule="HomeTask" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController hidesBottomBarWhenPushed="YES" id="BdF-GB-AXP" customClass="TaskDetailViewController" customModule="HomeTask" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dPC-JL-mc7">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -156,6 +176,11 @@
                                 <rect key="frame" x="81" y="137" width="20" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </activityIndicatorView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gLF-k2-tiC" userLabel="Delete">
+                                <rect key="frame" x="165" y="558" width="45" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Delete"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="k85-Nv-The"/>
@@ -181,7 +206,7 @@
         <!--Configuration View Controller-->
         <scene sceneID="qlQ-wN-4eb">
             <objects>
-                <viewController id="pNf-hn-PW4" customClass="ConfigurationViewController" customModule="HomeTask" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController hidesBottomBarWhenPushed="YES" id="pNf-hn-PW4" customClass="ConfigurationViewController" customModule="HomeTask" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0yy-zO-0CG">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -247,7 +272,7 @@
         <!--Photo Picker View Controller-->
         <scene sceneID="iex-rr-FC3">
             <objects>
-                <viewController id="el1-Sk-L0F" customClass="PhotoPickerViewController" customModule="HomeTask" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController hidesBottomBarWhenPushed="YES" id="el1-Sk-L0F" customClass="PhotoPickerViewController" customModule="HomeTask" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="nCe-WB-QFR">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -349,6 +374,7 @@
         <scene sceneID="uke-UW-Lj8">
             <objects>
                 <navigationController id="3iP-gy-PtQ" customClass="NavViewController" customModule="HomeTask" customModuleProvider="target" sceneMemberID="viewController">
+                    <nil key="simulatedBottomBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="7FZ-Sc-G8W">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
