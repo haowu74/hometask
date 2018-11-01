@@ -52,6 +52,12 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
         taskTitleText = taskTitle.text
     }
     
+    @IBAction func deleteTask(_ sender: Any) {
+        removeTask {
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+    
     @IBAction func unwindFromTaskAssignViewController(segue: UIStoryboardSegue) {
         
         let taskAssignViewController = segue.source as! TaskAssignViewController
@@ -227,6 +233,15 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
         ref.updateChildValues(taskUpdate)
     }
     
+    func removeTask(completion: @escaping () -> Void) {
+        deletePhoto()
+        deleteImage()
+        ref.child("tasks").child(familyId!).child(taskId!).removeValue()
+        DispatchQueue.main.async {
+            completion()
+        }
+    }
+    
     func updateImage(_ familyId: String) -> String? {
         let imagePath = "chat_photos/\(familyId)/\(taskId!).jpg"
         let metadata = StorageMetadata()
@@ -237,6 +252,11 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
             return imagePath
         }
         return nil
+    }
+    
+    func deleteImage() {
+        let imagePath = "chat_photos/\(familyId!)/\(taskId!).jpg"
+        self.storageRef!.child(imagePath).delete(completion: nil)
     }
     
     @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer)
@@ -303,7 +323,19 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
                 print("Photo Core data save failed")
             }
         }
-
+    }
+    
+    private func deletePhoto() {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Photo")
+        fetchRequest.predicate = NSPredicate(format: "family == %@ AND task == %@", familyId!, taskId!)
+        
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        do {
+            try dataController.viewContext.execute(deleteRequest)
+        } catch {
+            // TODO: handle the error
+        }
+        
     }
 }
 
