@@ -72,7 +72,7 @@
                         </connections>
                     </tableView>
                     <toolbarItems>
-                        <barButtonItem title="Hide Completed" id="uKf-qg-e27" userLabel="Hide Show Completed">
+                        <barButtonItem title="Show Completed" id="uKf-qg-e27" userLabel="Hide Show Completed">
                             <connections>
                                 <action selector="toggleShowingCompletedTasks:" destination="5di-nD-Zkq" id="K5p-WT-sB1"/>
                             </connections>
@@ -84,7 +84,7 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="xUS-wu-1aX"/>
-                        <barButtonItem title="Latest Up" id="Dci-vd-9ka" userLabel="Sort">
+                        <barButtonItem title="Sort" id="Dci-vd-9ka" userLabel="Sort">
                             <connections>
                                 <action selector="sortByDate:" destination="5di-nD-Zkq" id="sBQ-e8-few"/>
                             </connections>

@@ -58,12 +58,7 @@ class TaskTableViewController: UITableViewController {
     
     @IBAction func sortByDate(_ sender: UIBarButtonItem) {
         sortByDateAscending = !sortByDateAscending
-        if sortByDateAscending {
-            sender.title = "Latest Up"
-        }
-        else {
-            sender.title = "Earliest Up"
-        }
+
         filteredTasks = filteredTasks.sorted(by: sortTasks)
         tableView.reloadData()
     }
@@ -103,21 +98,6 @@ class TaskTableViewController: UITableViewController {
         getFamilyMember()
         self.navigationController?.setToolbarHidden(false, animated: false)
         
-        /*
-        let familyId = Utils.getHash(email!)
-        _refHandle = ref.child("tasks").queryOrderedByKey().queryEqual(toValue: familyId).observe(.childAdded, with: { (snapshot: DataSnapshot) in
-            let groups = snapshot.value as! [String: Any]
-            
-            self.tasks = groups
-            self.tableView.reloadData()
-
-        })
-        */
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
     override func viewDidAppear(_ animated: Bool) {
