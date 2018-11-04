@@ -1,4 +1,4 @@
-# hometask
+# HomeTask
 
 ## Introduction
 
