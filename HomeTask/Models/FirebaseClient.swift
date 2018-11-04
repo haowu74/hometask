@@ -13,16 +13,19 @@ import FirebaseGoogleAuthUI
 
 class FirebaseClient {
     
-    // Singleton
+    // Mark: Singleton
     private init() {
         
     }
+    static let shared = FirebaseClient()
+    
+    // Mark: Properties
     
     var ref: DatabaseReference!
     var storageRef: StorageReference!
     var user: User?
     
-    static let shared = FirebaseClient()
+    //Mark: Functions
     
     func configureDatabase() -> DatabaseReference {
         return Database.database().reference()
@@ -118,7 +121,6 @@ class FirebaseClient {
     func deleteTask(familyId: String, taskId: String) {
         ref.child("tasks").child(familyId).child(taskId).removeValue()
     }
-    
     
 }
 

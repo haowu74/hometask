@@ -7,9 +7,6 @@
 //
 
 import UIKit
-//import Firebase
-//import FirebaseAuthUI
-//import FirebaseGoogleAuthUI
 
 class LoginViewController: UIViewController {
     
