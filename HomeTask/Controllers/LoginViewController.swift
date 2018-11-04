@@ -7,9 +7,9 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAuthUI
-import FirebaseGoogleAuthUI
+//import Firebase
+//import FirebaseAuthUI
+//import FirebaseGoogleAuthUI
 
 class LoginViewController: UIViewController {
     
@@ -23,7 +23,10 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureAuth()
+        if !appDelegate.authConfigured {
+            configureAuth()
+            appDelegate.authConfigured = true
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -35,10 +38,8 @@ class LoginViewController: UIViewController {
     // MARK: Properties
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    
-    var user: User?
-    fileprivate var _refHandle: DatabaseHandle!
-    fileprivate var _authHandle: AuthStateDidChangeListenerHandle!
+    let client = FirebaseClient.shared
+
     // log in status
     var login = false
     
@@ -47,29 +48,23 @@ class LoginViewController: UIViewController {
     // MARK: Config
     
     func configureAuth() {
-        let provider: [FUIAuthProvider] = [FUIGoogleAuth()]
-        FUIAuth.defaultAuthUI()?.providers = provider
-        
-        _authHandle = Auth.auth().addStateDidChangeListener({ (auth: Auth, user: User?) in
-            if let activeUser = user {
-                if self.user != activeUser {
-                    self.user = activeUser
-                    self.login = true
-                    self.performSegue(withIdentifier: "ShowNav", sender: nil)
-                }
+        client.configureAuth(success: {
+            self.login = true
+            DispatchQueue.main.async {
+                self.performSegue(withIdentifier: "ShowNav", sender: nil)
             }
-            else {
-                self.login = false
+        }) {
+            self.login = false
+            DispatchQueue.main.async {
                 self.loginSession()
             }
-        })
+        }
     }
     
     // Mark: Functions
     
     func loginSession() {
-        let authUI = FUIAuth.defaultAuthUI();
-        let authViewController = authUI!.authViewController()
+        let authViewController = client.signIn()
         self.present(authViewController, animated: true, completion: nil)
     }
     
@@ -78,7 +73,7 @@ class LoginViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShowNav" {
             let taskTableViewController = (segue.destination as! UINavigationController).childViewControllers[0] as! TaskTableViewController
-            taskTableViewController.email = user?.email
+            taskTableViewController.email = client.user?.email
             if let user = UserDefaults.standard.string(forKey: "user") {
                 appDelegate.user = user
             }

@@ -7,9 +7,7 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAuthUI
-import FirebaseGoogleAuthUI
+
 
 class TaskTableViewController: UITableViewController {
     
@@ -62,9 +60,7 @@ class TaskTableViewController: UITableViewController {
     
     var tasks: [(key: String, value: Any)]! = []
     var filteredTasks: [(key: String, value: Any)]! = []
-    var ref: DatabaseReference!
-    var storageRef: StorageReference!
-    fileprivate var _refHandle: DatabaseHandle!
+
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var familyExisting = false
     var email: String?
@@ -75,46 +71,36 @@ class TaskTableViewController: UITableViewController {
     var onlyShowMyTask = false
     var sortByDateAscending = false
     
+    let client = FirebaseClient.shared
     
-    // Mark: Configure Firebase Database and Storage
-    
-    func configureDatabase() {
-        ref = Database.database().reference()
-    }
-    
-    func configureStorage() {
-        storageRef = Storage.storage().reference()
-    }
     
     // Mark: Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureDatabase()
-        configureStorage()
         
-        let connectedRef = Database.database().reference(withPath: ".info/connected")
-        connectedRef.observe(.value, with: { snapshot in
+        client.getConnectionState { (snapshot) in
             if snapshot.value as? Bool ?? false {
                 self.connected = true
             } else {
                 self.connected = false
             }
-        })
-        getFamilyMember()
-        self.navigationController?.setToolbarHidden(false, animated: false)
+        }
+        self.getFamilyMember()
+        DispatchQueue.main.async {
+            self.navigationController?.setToolbarHidden(false, animated: false)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         let familyId = Utils.getHash(email!)
-        _refHandle = ref.child("tasks").queryOrderedByKey().queryEqual(toValue: familyId).observe(.childAdded, with: { (snapshot: DataSnapshot) in
+        client.queryTask(familyId: familyId) { (snapshot) in
             let groups = snapshot.value as! [String: Any]
-            
             let sortedGroup = groups.sorted(by: self.sortTasks)
             self.tasks = sortedGroup
             self.filteredTasks = self.tasks.filter(self.filterTasks)
             self.tableView.reloadData()
-        })
+        }
     }
 
     // MARK: - Table View Delegator and Data Source
@@ -161,14 +147,12 @@ class TaskTableViewController: UITableViewController {
         if segue.identifier == "configuration" {
             let configurationViewController = segue.destination as! ConfigurationViewController
             configurationViewController.email = email
-            configurationViewController.ref = ref
+
             configurationViewController.familyExisting = familyExisting
         }
         else if segue.identifier == "taskDetail" {
             let taskDetailViewController = segue.destination as! TaskDetailViewController
-            taskDetailViewController.ref = ref
             taskDetailViewController.email = email
-            taskDetailViewController.storageRef = storageRef
             
             if !(sender is UIBarButtonItem) {
                 // View / Update exiting task
@@ -230,7 +214,7 @@ class TaskTableViewController: UITableViewController {
     
     private func getFamilyMember() {
         let familyId = Utils.getHash(email!)
-        ref.child("families").child(familyId).observeSingleEvent(of: .value) { (snapshot) in
+        client.queryFamily(familyId: familyId) { (snapshot) in
             let value = snapshot.value as? NSDictionary
             if value != nil {
                 let email = value?["family"] as? String ?? ""

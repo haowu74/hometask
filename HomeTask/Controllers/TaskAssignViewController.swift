@@ -7,9 +7,6 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAuthUI
-import FirebaseGoogleAuthUI
 
 class TaskAssignViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
     
@@ -27,7 +24,7 @@ class TaskAssignViewController: UIViewController, UIPickerViewDelegate, UIPicker
     // Mark: Properties
     
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    
+    let client = FirebaseClient.shared
     var name: String?
     var dueDate: Date?
     

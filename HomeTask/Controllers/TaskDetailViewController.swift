@@ -7,9 +7,6 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAuthUI
-import FirebaseGoogleAuthUI
 import CoreData
 
 class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDelegate {
@@ -86,8 +83,6 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
     var dueDate: Date?
     var taskDescriptionText: String?
     var taskTitleText: String?
-    var ref: DatabaseReference!
-    var storageRef: StorageReference!
     var email: String?
     var taskId: String?
     var existTask: Bool?
@@ -97,7 +92,7 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
     var photosFetchedResultsController: NSFetchedResultsController<Photo>!
     var dataController: DataController!
     var connected: Bool!
-    
+    let client = FirebaseClient.shared
     // Mark: Life Cycle
     
     override func viewDidLoad() {
@@ -126,7 +121,7 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
             }
             else if connected {
                 if let imageUrl = self.imageUrl {
-                    storageRef!.child(imageUrl).getData(maxSize: INT64_MAX) { (data, error) in
+                    client.getImage(imageUrl: imageUrl, maxSize: INT64_MAX) { (data, error) in
                         guard error == nil else {
                             print("error downloading: \(error!)")
                             return
@@ -183,16 +178,13 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
             taskAssignee.text = assignee
         }
 
-        let connectedRef = Database.database().reference(withPath: ".info/connected")
-        connectedRef.observe(.value, with: { snapshot in
+        client.getConnectionState { (snapshot) in
             if snapshot.value as? Bool ?? false {
                 self.connected = true
-                print("Connected")
             } else {
                 self.connected = false
-                print("Not connected")
             }
-        })
+        }
         
         if let completed = completed {
             taskCompleted.selectedSegmentIndex = completed ? 1 : 0;
@@ -221,9 +213,7 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
     
     private func addTask() {
 
-        let reference = ref.child("tasks").child(familyId!).childByAutoId()
-        taskId = reference.key
-        let imagePath = updateImage(familyId!)
+        //let imagePath = updateImage(familyId!)
         let completedStr = completed ?? false ? "true" : "false"
         let title = taskTitle.text
         let description = taskDescription.text
@@ -235,14 +225,14 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
             Constants.TasksFields.description: description,
             Constants.TasksFields.assignee: assignee,
             Constants.TasksFields.due: due,
-            Constants.TasksFields.imageUrl: imagePath
+            Constants.TasksFields.imageUrl: nil
         ]
-        reference.setValue(mdata)
+        taskId = client.addTask(familyId: familyId!, mdata: mdata, updateImageUrl: updateImage)
     }
     
     private func updateTask() {
         
-        let imagePath = updateImage(familyId!)
+        let imagePath = updateImage(familyId: familyId!, taskId: taskId!)
         let completedStr = completed ?? false ? "true" : "false"
         let title = taskTitle.text
         let description = taskDescription.text
@@ -256,26 +246,23 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
             Constants.TasksFields.imageUrl: imagePath,
             Constants.TasksFields.completed: completedStr
         ]
-        let taskUpdate = ["/tasks/\(familyId!)/\(taskId!)": mdata]
-        ref.updateChildValues(taskUpdate)
+        client.updateTask(familyId: familyId!, taskId: taskId!, mdata: mdata)
     }
     
     private func removeTask(completion: @escaping () -> Void) {
         deletePhoto()
         deleteImage()
-        ref.child("tasks").child(familyId!).child(taskId!).removeValue()
+        client.deleteTask(familyId: familyId!, taskId: taskId!)
         DispatchQueue.main.async {
             completion()
         }
     }
     
-    private func updateImage(_ familyId: String) -> String? {
-        let imagePath = "chat_photos/\(familyId)/\(taskId!).jpg"
-        let metadata = StorageMetadata()
-        metadata.contentType = "image/jpeg"
+    private func updateImage(familyId: String, taskId: String) -> String? {
+        let imagePath = "chat_photos/\(familyId)/\(taskId).jpg"
+        
         if let image = taskPicture.image {
-            let photoData = UIImageJPEGRepresentation(image, 0.8)
-            self.storageRef!.child(imagePath).putData(photoData!, metadata: metadata)
+            client.updateImage(imageUrl: imagePath, image: image)
             return imagePath
         }
         return nil
@@ -283,10 +270,10 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
     
     private func deleteImage() {
         let imagePath = "chat_photos/\(familyId!)/\(taskId!).jpg"
-        self.storageRef!.child(imagePath).delete(completion: nil)
+        client.deleteImage(imageUrl: imagePath, completion: nil)
     }
     
-    //Save photo to Core Data
+    // Save photo to Core Data
     private func savePhoto() {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Photo")
         fetchRequest.predicate = NSPredicate(format: "family == %@ AND task == %@", familyId!, taskId!)
@@ -318,6 +305,7 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
         }
     }
     
+    // Delete photo from Core Data
     private func deletePhoto() {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Photo")
         fetchRequest.predicate = NSPredicate(format: "family == %@ AND task == %@", familyId!, taskId!)

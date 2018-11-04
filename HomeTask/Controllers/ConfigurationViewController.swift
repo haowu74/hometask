@@ -7,9 +7,9 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAuthUI
-import FirebaseGoogleAuthUI
+//import Firebase
+//import FirebaseAuthUI
+//import FirebaseGoogleAuthUI
 
 
 class ConfigurationViewController: UIViewController {
@@ -28,11 +28,7 @@ class ConfigurationViewController: UIViewController {
     }
     
     @IBAction func logout(_ sender: Any) {
-        do {
-            try Auth.auth().signOut()
-        } catch {
-            print("unable to sign out: \(error)")
-        }
+        client.signOut()
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -43,8 +39,8 @@ class ConfigurationViewController: UIViewController {
     // Mark: Properties
     
     var email: String?
-    var ref: DatabaseReference!
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    let client = FirebaseClient.shared
     var familyExisting = false
     var selectedMemberIdx = 0
     
@@ -70,8 +66,9 @@ class ConfigurationViewController: UIViewController {
         mdata[Constants.FamilyFields.name] = [fullName.text] as? [String]
 
         let familyId = Utils.getHash(email!)
+        
         if !familyExisting {
-            ref.child("families").child(familyId).setValue(mdata)
+            client.addFamily(familyId: familyId, mdata: mdata)
         }
         else {
             if let name = fullName.text {
@@ -93,8 +90,7 @@ class ConfigurationViewController: UIViewController {
                         "family": email ?? "",
                         "name": self.appDelegate.family.names
                     ]
-                    let familyUpdate = ["/families/\(familyId)": family]
-                    ref.updateChildValues(familyUpdate)
+                    client.updateFamilyMember(familyId: familyId, mdata: family)
                 }
                 else if name.isEmpty {
                     self.appDelegate.family.names.remove(at: selectedMemberIdx-1)

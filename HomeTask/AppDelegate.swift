@@ -18,12 +18,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var user: String?
     let dataController = DataController(modelName: "HomeTask")
+    let client = FirebaseClient.shared
+    var authConfigured = false
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
         Database.database().isPersistenceEnabled = true
         dataController.load()
+        
+        client.ref = client.configureDatabase()
+        client.storageRef = client.configureStorage()
+        
         return true
     }
     
