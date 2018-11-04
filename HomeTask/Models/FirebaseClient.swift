@@ -8,8 +8,7 @@
 
 import Foundation
 import Firebase
-import FirebaseAuthUI
-import FirebaseGoogleAuthUI
+import FirebaseUI
 
 class FirebaseClient {
     
@@ -52,9 +51,11 @@ class FirebaseClient {
         })
     }
     
+    
     func signIn() -> UIViewController {
         let authUI = FUIAuth.defaultAuthUI();
         let authViewController = authUI!.authViewController()
+        
         return authViewController
     }
     
@@ -103,10 +104,10 @@ class FirebaseClient {
         self.storageRef!.child(imageUrl).putData(photoData!, metadata: metadata)
     }
     
-    func addTask(familyId: String, mdata: [String: String?], updateImageUrl: @escaping (String, String) -> String?) -> String {
+    func addTask(familyId: String, mdata: [String: String?], updateImageUrl: @escaping (String, String) -> String?) -> String? {
         let reference = ref.child("tasks").child(familyId).childByAutoId()
         let taskId = reference.key
-        let imageUrl = updateImageUrl(familyId, taskId)
+        let imageUrl = updateImageUrl(familyId, taskId!)
         var data = mdata
         data[Constants.TasksFields.imageUrl] = imageUrl
         reference.setValue(data)

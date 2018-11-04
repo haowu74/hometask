@@ -1,7 +1,7 @@
 # HomeTask
 
 use_frameworks!
-platform :ios, '8.0'
+platform :ios, '10.0'
 
 pod 'Firebase/Storage'
 pod 'Firebase/Core'
