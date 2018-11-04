@@ -10,6 +10,10 @@ import UIKit
 
 class PhotoPickerViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
+    // Mark: IBOutlet
+    
+    @IBOutlet weak var photo: UIImageView!
+    
     // Mark: IBAction
     
     @IBAction func cameraSelected(_ sender: Any) {
@@ -20,18 +24,20 @@ class PhotoPickerViewController: UIViewController, UIImagePickerControllerDelega
         chooseSourceType(.photoLibrary)
     }
     
-    @IBOutlet weak var photo: UIImageView!
-    
+    // Mark: Properties
+    var image: UIImage?
     
     // Mark: Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
         self.navigationItem.hidesBackButton = true
         let newBackButton = UIBarButtonItem(title: "Back", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.back(sender:)))
         self.navigationItem.leftBarButtonItem = newBackButton
+        if let image = self.image {
+            photo.image = image
+        }
     }
     
     // Mark: Callbacks
@@ -49,7 +55,9 @@ class PhotoPickerViewController: UIViewController, UIImagePickerControllerDelega
         self.present(pickerController, animated: true, completion: nil)
     }
     
-    private func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+    // Mark: UIImagePickerControllerDelegate
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         if let image = info["UIImagePickerControllerOriginalImage"] as? UIImage {
             photo.image = image
         }

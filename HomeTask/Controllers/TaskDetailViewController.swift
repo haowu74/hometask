@@ -333,12 +333,17 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
     // Mark: Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+
         if segue.identifier == "taskAssigneeDue" {
             let taskAssignViewController = segue.destination as! TaskAssignViewController
             taskAssignViewController.name = name
             taskAssignViewController.dueDate = dueDate
+        }
+        else if segue.identifier == "photoSelection" {
+            if let img = taskPicture.image {
+                let photoPickerViewController = segue.destination as! PhotoPickerViewController
+                photoPickerViewController.image = img
+            }
         }
     }
     
