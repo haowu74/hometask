@@ -10,6 +10,8 @@ import UIKit
 
 class PhotoPickerViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
+    // Mark: IBAction
+    
     @IBAction func cameraSelected(_ sender: Any) {
         chooseSourceType(.camera)
     }
@@ -21,6 +23,8 @@ class PhotoPickerViewController: UIViewController, UIImagePickerControllerDelega
     @IBOutlet weak var photo: UIImageView!
     
     
+    // Mark: Life Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -30,32 +34,26 @@ class PhotoPickerViewController: UIViewController, UIImagePickerControllerDelega
         self.navigationItem.leftBarButtonItem = newBackButton
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
+    // Mark: Callbacks
     
-    func chooseSourceType(_ sourceType: UIImagePickerControllerSourceType) {
+    @objc func back(sender: UIBarButtonItem) {
+        performSegue(withIdentifier: "unwindFromPhotoPickerViewController", sender: self)
+    }
+    
+    // Mark: Functions
+    
+    private func chooseSourceType(_ sourceType: UIImagePickerControllerSourceType) {
         let pickerController = UIImagePickerController()
         pickerController.delegate = self
         pickerController.sourceType = sourceType
         self.present(pickerController, animated: true, completion: nil)
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+    private func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         if let image = info["UIImagePickerControllerOriginalImage"] as? UIImage {
             photo.image = image
         }
         dismiss(animated: true, completion: nil)
     }
 
-    @objc func back(sender: UIBarButtonItem) {
-        performSegue(withIdentifier: "unwindFromPhotoPickerViewController", sender: self)
-    }
 }

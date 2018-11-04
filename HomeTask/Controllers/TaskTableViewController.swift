@@ -13,20 +13,7 @@ import FirebaseGoogleAuthUI
 
 class TaskTableViewController: UITableViewController {
     
-    var tasks: [(key: String, value: Any)]! = []
-    var filteredTasks: [(key: String, value: Any)]! = []
-    var ref: DatabaseReference!
-    var storageRef: StorageReference!
-    fileprivate var _refHandle: DatabaseHandle!
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    var familyExisting = false
-    var email: String?
-    var connected = false
-    
-    // TableView Display options
-    var showCompletedTask = false
-    var onlyShowMyTask = false
-    var sortByDateAscending = false
+    // Mark: IBAction
     
     @IBAction func config(_ sender: Any) {
         self.performSegue(withIdentifier: "configuration", sender: nil)
@@ -68,8 +55,28 @@ class TaskTableViewController: UITableViewController {
     }
     
     @IBAction func unwindFromTaskDetailViewController(segue: UIStoryboardSegue) {
-        
+        // Todo: Segue unwind from TaskDetailViewController
     }
+    
+    // Mark: Propeties
+    
+    var tasks: [(key: String, value: Any)]! = []
+    var filteredTasks: [(key: String, value: Any)]! = []
+    var ref: DatabaseReference!
+    var storageRef: StorageReference!
+    fileprivate var _refHandle: DatabaseHandle!
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    var familyExisting = false
+    var email: String?
+    var connected = false
+    
+    // TableView Display options
+    var showCompletedTask = false
+    var onlyShowMyTask = false
+    var sortByDateAscending = false
+    
+    
+    // Mark: Configure Firebase Database and Storage
     
     func configureDatabase() {
         ref = Database.database().reference()
@@ -78,6 +85,8 @@ class TaskTableViewController: UITableViewController {
     func configureStorage() {
         storageRef = Storage.storage().reference()
     }
+    
+    // Mark: Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,16 +97,12 @@ class TaskTableViewController: UITableViewController {
         connectedRef.observe(.value, with: { snapshot in
             if snapshot.value as? Bool ?? false {
                 self.connected = true
-                print("Connected")
             } else {
                 self.connected = false
-                print("Not connected")
             }
         })
-        
         getFamilyMember()
         self.navigationController?.setToolbarHidden(false, animated: false)
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -109,26 +114,16 @@ class TaskTableViewController: UITableViewController {
             self.tasks = sortedGroup
             self.filteredTasks = self.tasks.filter(self.filterTasks)
             self.tableView.reloadData()
-
         })
-        
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-    // MARK: - Table view data source
+    // MARK: - Table View Delegator and Data Source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        
         return filteredTasks.count
     }
 
@@ -156,62 +151,10 @@ class TaskTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.performSegue(withIdentifier: "taskDetail", sender: nil)
     }
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
 
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    func getFamilyMember() {
-        let familyId = Utils.getHash(email!)
-        ref.child("families").child(familyId).observeSingleEvent(of: .value) { (snapshot) in
-            let value = snapshot.value as? NSDictionary
-            if value != nil {
-                let email = value?["family"] as? String ?? ""
-                let names = value?["name"] as? [String] ?? []
-                self.appDelegate.family.email = email
-                self.appDelegate.family.names = names
-                self.familyExisting = true
-            }
-            else{
-                self.familyExisting = false
-            }
-            
-        }
-    }
     
     // MARK: - Navigation
 
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
@@ -247,12 +190,13 @@ class TaskTableViewController: UITableViewController {
             else {
                 // New Task
                 taskDetailViewController.existTask = false
-                //taskDetailViewController.taskId = 
                 taskDetailViewController.completed = false
                 taskDetailViewController.connected = connected
             }
         }
     }
+    
+    // Mark: Functions
     
     private func sortTasks(task1: (key: String, value: Any), task2: (key: String, value: Any)) -> Bool {
         let t1 = task1.value as! [String: String]
@@ -282,5 +226,22 @@ class TaskTableViewController: UITableViewController {
             }
         }
         return true
+    }
+    
+    private func getFamilyMember() {
+        let familyId = Utils.getHash(email!)
+        ref.child("families").child(familyId).observeSingleEvent(of: .value) { (snapshot) in
+            let value = snapshot.value as? NSDictionary
+            if value != nil {
+                let email = value?["family"] as? String ?? ""
+                let names = value?["name"] as? [String] ?? []
+                self.appDelegate.family.email = email
+                self.appDelegate.family.names = names
+                self.familyExisting = true
+            }
+            else{
+                self.familyExisting = false
+            }
+        }
     }
 }

@@ -13,24 +13,8 @@ import FirebaseGoogleAuthUI
 import CoreData
 
 class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDelegate {
-
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
-    var name: String?
-    var dueDate: Date?
-    var taskDescriptionText: String?
-    var taskTitleText: String?
-    var ref: DatabaseReference!
-    var storageRef: StorageReference!
-    var email: String?
-    var taskId: String?
-    var existTask: Bool?
-    var imageUrl: String?
-    var completed: Bool?
-    var familyId: String?
-    var photosFetchedResultsController: NSFetchedResultsController<Photo>!
-    var dataController: DataController!
-    var connected: Bool!
+    // Mark: IBOutlet
     
     @IBOutlet weak var taskPicture: UIImageView!
     @IBOutlet weak var taskTitle: UITextField!
@@ -39,6 +23,9 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
     @IBOutlet weak var taskDueDate: UITextField!
     @IBOutlet weak var taskCompleted: UISegmentedControl!
     @IBOutlet weak var photoLoading: UIActivityIndicatorView!
+    @IBOutlet weak var deleteTaskButton: UIButton!
+    
+    // Mark: IBAction
     
     @IBAction func editTaskAssignee(_ sender: Any) {
         self.performSegue(withIdentifier: "taskAssigneeDue", sender: nil)
@@ -53,7 +40,12 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
     }
     
     @IBAction func deleteTask(_ sender: Any) {
-        removeTask {
+        if (taskId != nil) {
+            removeTask {
+                self.navigationController?.popViewController(animated: true)
+            }
+        }
+        else {
             self.navigationController?.popViewController(animated: true)
         }
     }
@@ -86,6 +78,28 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
         }
     }
     
+    // Mark: Properties
+    
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    
+    var name: String?
+    var dueDate: Date?
+    var taskDescriptionText: String?
+    var taskTitleText: String?
+    var ref: DatabaseReference!
+    var storageRef: StorageReference!
+    var email: String?
+    var taskId: String?
+    var existTask: Bool?
+    var imageUrl: String?
+    var completed: Bool?
+    var familyId: String?
+    var photosFetchedResultsController: NSFetchedResultsController<Photo>!
+    var dataController: DataController!
+    var connected: Bool!
+    
+    // Mark: Life Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -94,6 +108,8 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
         
         familyId = Utils.getHash(email!)
         dataController = appDelegate.dataController
+        
+        // Edit existing task
         if taskId != nil {
             setupFetchedResultsController()
             if  photosFetchedResultsController.fetchedObjects?.count ?? 0 > 0 {
@@ -126,10 +142,13 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
                     }
                 }
             }
-        } else {
+        }
+        // Create new task
+        else {
             self.photoLoading.stopAnimating()
             self.photoLoading.isHidden = true
             self.taskPicture.isHidden = false
+            self.deleteTaskButton.setTitle("Discard", for: UIControlState.normal)
         }
         
         // Do any additional setup after loading the view.
@@ -181,6 +200,8 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
 
     }
     
+    // Mark: Callback functions
+    
     @objc func back(sender: UIBarButtonItem) {
         if existTask! {
             updateTask()
@@ -191,8 +212,14 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
         navigationController?.popViewController(animated: true)
     }
     
+    @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer)
+    {
+        performSegue(withIdentifier: "photoSelection", sender: nil)
+    }
     
-    func addTask() {
+    // Mark: Functions
+    
+    private func addTask() {
 
         let reference = ref.child("tasks").child(familyId!).childByAutoId()
         taskId = reference.key
@@ -212,8 +239,8 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
         ]
         reference.setValue(mdata)
     }
-
-    func updateTask() {
+    
+    private func updateTask() {
         
         let imagePath = updateImage(familyId!)
         let completedStr = completed ?? false ? "true" : "false"
@@ -233,7 +260,7 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
         ref.updateChildValues(taskUpdate)
     }
     
-    func removeTask(completion: @escaping () -> Void) {
+    private func removeTask(completion: @escaping () -> Void) {
         deletePhoto()
         deleteImage()
         ref.child("tasks").child(familyId!).child(taskId!).removeValue()
@@ -242,7 +269,7 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
         }
     }
     
-    func updateImage(_ familyId: String) -> String? {
+    private func updateImage(_ familyId: String) -> String? {
         let imagePath = "chat_photos/\(familyId)/\(taskId!).jpg"
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"
@@ -254,43 +281,9 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
         return nil
     }
     
-    func deleteImage() {
+    private func deleteImage() {
         let imagePath = "chat_photos/\(familyId!)/\(taskId!).jpg"
         self.storageRef!.child(imagePath).delete(completion: nil)
-    }
-    
-    @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer)
-    {
-        //let tappedImage = tapGestureRecognizer.view as! UIImageView
-        
-        // Your action
-        performSegue(withIdentifier: "photoSelection", sender: nil)
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-        if segue.identifier == "taskAssigneeDue" {
-            let taskAssignViewController = segue.destination as! TaskAssignViewController
-            taskAssignViewController.name = name
-            taskAssignViewController.dueDate = dueDate
-        }
-    }
-    
-    fileprivate func setupFetchedResultsController() {
-        let fetchRequest:NSFetchRequest<Photo> = Photo.fetchRequest()
-        let predicate = NSPredicate(format: "family == %@ AND task == %@", familyId!, taskId!)
-        //let sortDescriptor = NSSortDescriptor(key: "id", ascending: true)
-        fetchRequest.predicate = predicate
-        fetchRequest.sortDescriptors = []
-        
-        photosFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
-        photosFetchedResultsController.delegate = self
-        do {
-            try photosFetchedResultsController.performFetch()
-        } catch {
-            fatalError("The fetch could not be performed: \(error.localizedDescription)")
-        }
     }
     
     //Save photo to Core Data
@@ -308,7 +301,7 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
         let photo = Photo(context: dataController.viewContext)
         photo.task = taskId
         photo.family = familyId
-
+        
         if let image = taskPicture.image {
             guard let imageData = UIImageJPEGRepresentation(image, 1) else {
                 // handle failed conversion
@@ -335,11 +328,43 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
         } catch {
             // TODO: handle the error
         }
+    }
+    
+    // Mark: Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
+        if segue.identifier == "taskAssigneeDue" {
+            let taskAssignViewController = segue.destination as! TaskAssignViewController
+            taskAssignViewController.name = name
+            taskAssignViewController.dueDate = dueDate
+        }
+    }
+    
+    // Mark: Firebase
+    
+    fileprivate func setupFetchedResultsController() {
+        let fetchRequest:NSFetchRequest<Photo> = Photo.fetchRequest()
+        let predicate = NSPredicate(format: "family == %@ AND task == %@", familyId!, taskId!)
+        //let sortDescriptor = NSSortDescriptor(key: "id", ascending: true)
+        fetchRequest.predicate = predicate
+        fetchRequest.sortDescriptors = []
         
+        photosFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        photosFetchedResultsController.delegate = self
+        do {
+            try photosFetchedResultsController.performFetch()
+        } catch {
+            fatalError("The fetch could not be performed: \(error.localizedDescription)")
+        }
     }
 }
 
 extension TaskDetailViewController: UITextViewDelegate {
+    
+    // Mark: UITextViewDelegate
+    
     func textViewDidChange(_ textView: UITextView) {
         taskDescriptionText = textView.text
     }

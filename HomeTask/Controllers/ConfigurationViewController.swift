@@ -13,16 +13,14 @@ import FirebaseGoogleAuthUI
 
 
 class ConfigurationViewController: UIViewController {
-
-    var email: String?
-    var ref: DatabaseReference!
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    var familyExisting = false
-    var selectedMemberIdx = 0
+    
+    // Mark: IBOutlet
     
     @IBOutlet weak var familyEmailAddress: UILabel!
     @IBOutlet weak var fullName: UITextField!
     @IBOutlet weak var familyMemberList: UIPickerView!
+    
+    // Mark: IBAction
     
     @IBAction func updateName(_ sender: Any) {
         let data = [Constants.FamilyFields.family: email! as String]
@@ -42,6 +40,16 @@ class ConfigurationViewController: UIViewController {
         familyMemberList.isHidden = false
     }
     
+    // Mark: Properties
+    
+    var email: String?
+    var ref: DatabaseReference!
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    var familyExisting = false
+    var selectedMemberIdx = 0
+    
+    // Mark: Life Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -55,17 +63,9 @@ class ConfigurationViewController: UIViewController {
     }
     
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
-    func updateFamilyMember(data: [String:Any]) {
+    // Mark: Functions
+    
+    private func updateFamilyMember(data: [String:Any]) {
         var mdata = data
         mdata[Constants.FamilyFields.name] = [fullName.text] as? [String]
 
@@ -104,9 +104,12 @@ class ConfigurationViewController: UIViewController {
     }
 }
 
-// Mark: Extension for UIPickerViewDelegate and UIPickerViewDataSource
+
 
 extension ConfigurationViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    
+    // Mark: UIPickerViewDelegate and UIPickerViewDataSource
+    
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }

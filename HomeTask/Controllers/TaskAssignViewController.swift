@@ -12,19 +12,26 @@ import FirebaseAuthUI
 import FirebaseGoogleAuthUI
 
 class TaskAssignViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
-
+    
+    // Mark: IBOutlet
+    
+    @IBOutlet weak var familyMemberList: UIPickerView!
+    @IBOutlet weak var dueDatePicker: UIDatePicker!
+ 
+    // Mark: IBAction
+    
+    @IBAction func dueDateSelected(_ sender: Any) {
+        dueDate = dueDatePicker.date
+    }
+    
+    // Mark: Properties
+    
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
     var name: String?
     var dueDate: Date?
     
-    @IBOutlet weak var familyMemberList: UIPickerView!
-    @IBOutlet weak var dueDatePicker: UIDatePicker!
- 
-    @IBAction func dueDateSelected(_ sender: Any) {
-        dueDate = dueDatePicker.date
-    }
-    
+    // Mark: Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,11 +61,15 @@ class TaskAssignViewController: UIViewController, UIPickerViewDelegate, UIPicker
     }
     
 
+    // Mark: Navigation
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
     }
 
+    // Mark: UIPickerViewDelegate, UIPickerViewDataSource
+    
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
