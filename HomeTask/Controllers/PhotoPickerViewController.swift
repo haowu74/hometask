@@ -14,6 +14,9 @@ class PhotoPickerViewController: UIViewController, UIImagePickerControllerDelega
     
     @IBOutlet weak var photo: UIImageView!
     
+    @IBOutlet weak var cameraButton: UIBarButtonItem!
+    @IBOutlet weak var albumButton: UIBarButtonItem!
+    
     // Mark: IBAction
     
     @IBAction func cameraSelected(_ sender: Any) {
@@ -27,6 +30,7 @@ class PhotoPickerViewController: UIViewController, UIImagePickerControllerDelega
     // Mark: Properties
     var image: UIImage?
     
+
     // Mark: Life Cycle
     
     override func viewDidLoad() {
@@ -35,6 +39,7 @@ class PhotoPickerViewController: UIViewController, UIImagePickerControllerDelega
         self.navigationItem.hidesBackButton = true
         let newBackButton = UIBarButtonItem(title: "Back", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.back(sender:)))
         self.navigationItem.leftBarButtonItem = newBackButton
+        cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
         if let image = self.image {
             photo.image = image
         }

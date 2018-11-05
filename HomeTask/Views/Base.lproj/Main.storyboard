@@ -348,6 +348,8 @@
                         <viewLayoutGuide key="safeArea" id="Tvf-Jh-6WT"/>
                     </view>
                     <connections>
+                        <outlet property="albumButton" destination="naf-bc-zVB" id="Vvq-uN-tE6"/>
+                        <outlet property="cameraButton" destination="2C3-C0-Kzt" id="S54-Da-hcZ"/>
                         <outlet property="photo" destination="L2e-p1-vfP" id="Cnl-QJ-Vs2"/>
                         <segue destination="3j4-oQ-csL" kind="unwind" identifier="unwindFromPhotoPickerViewController" unwindAction="unwindFromPhotoPickerViewControllerWithSegue:" id="LDE-6d-k05"/>
                     </connections>
