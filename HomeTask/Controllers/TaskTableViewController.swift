@@ -72,12 +72,13 @@ class TaskTableViewController: UITableViewController {
     
     let client = FirebaseClient.shared
     
+    var indicator = UIActivityIndicatorView()
     
     // Mark: Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        activityIndicator()
         client.getConnectionState { (snapshot) in
             if snapshot.value as? Bool ?? false {
                 self.connected = true
@@ -86,12 +87,13 @@ class TaskTableViewController: UITableViewController {
             }
         }
         self.getFamilyMember()
-        DispatchQueue.main.async {
-            self.navigationController?.setToolbarHidden(false, animated: false)
-        }
+        self.navigationController?.setToolbarHidden(false, animated: false)
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        indicator.startAnimating()
+        indicator.backgroundColor = UIColor.white
+        
         let familyId = Utils.getHash(email!)
         client.queryTask(familyId: familyId) { (snapshot) in
             if (snapshot.childrenCount > 0) {
@@ -104,6 +106,8 @@ class TaskTableViewController: UITableViewController {
             else {
                 self.filteredTasks.removeAll()
             }
+            self.indicator.stopAnimating()
+            self.indicator.hidesWhenStopped = true
             self.tableView.reloadData()
         }
     }
@@ -231,5 +235,12 @@ class TaskTableViewController: UITableViewController {
             }
             self.familyExisting = true
         }
+    }
+    
+    private func activityIndicator() {
+        indicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        indicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        indicator.center = CGPoint(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 3)
+        self.view.addSubview(indicator)
     }
 }
