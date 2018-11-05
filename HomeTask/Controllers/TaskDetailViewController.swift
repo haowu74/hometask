@@ -252,9 +252,10 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
     private func removeTask(completion: @escaping () -> Void) {
         deletePhoto()
         deleteImage()
-        client.deleteTask(familyId: familyId!, taskId: taskId!)
-        DispatchQueue.main.async {
-            completion()
+        client.deleteTask(familyId: familyId!, taskId: taskId!) { (error, reference) in
+            DispatchQueue.main.async {
+                completion()
+            }
         }
     }
     

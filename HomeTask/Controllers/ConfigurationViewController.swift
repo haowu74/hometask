@@ -25,6 +25,7 @@ class ConfigurationViewController: UIViewController {
     
     @IBAction func logout(_ sender: Any) {
         client.signOut()
+        UserDefaults.standard.removeObject(forKey: "user")
         self.dismiss(animated: true, completion: nil)
     }
     

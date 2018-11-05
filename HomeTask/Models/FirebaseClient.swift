@@ -86,7 +86,7 @@ class FirebaseClient {
     }
     
     func queryTask(familyId: String, callback: @escaping (DataSnapshot) -> Void) {
-        ref.child("tasks").queryOrderedByKey().queryEqual(toValue: familyId).observe(.childAdded, with: callback)
+        ref.child("tasks").queryOrderedByKey().queryEqual(toValue: familyId).observe(DataEventType.value, with: callback)
     }
     
     func getImage(imageUrl: String, maxSize: Int64, callback: @escaping (Data?, Error?) -> Void) -> Void {
@@ -119,8 +119,8 @@ class FirebaseClient {
         ref.updateChildValues(taskUpdate)
     }
     
-    func deleteTask(familyId: String, taskId: String) {
-        ref.child("tasks").child(familyId).child(taskId).removeValue()
+    func deleteTask(familyId: String, taskId: String, completion: @escaping ((Error?, DatabaseReference) -> Void)) {
+        ref.child("tasks").child(familyId).child(taskId).removeValue(completionBlock: completion)
     }
     
 }

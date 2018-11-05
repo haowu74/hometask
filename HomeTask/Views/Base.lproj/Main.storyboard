@@ -241,8 +241,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="email" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fDT-K3-B9t">
-                                <rect key="frame" x="16" y="113" width="343" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="email" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fDT-K3-B9t">
+                                <rect key="frame" x="16" y="113" width="40.5" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -284,6 +284,7 @@
                             <constraint firstItem="TLd-JR-aHB" firstAttribute="leading" secondItem="mwl-1X-So5" secondAttribute="leading" constant="16" id="6Q6-l0-Dds"/>
                             <constraint firstItem="mwl-1X-So5" firstAttribute="trailing" secondItem="Xiq-n8-KIO" secondAttribute="trailing" constant="16" id="Cvb-ci-sAd"/>
                             <constraint firstItem="gjV-Jx-lFJ" firstAttribute="top" secondItem="Xiq-n8-KIO" secondAttribute="bottom" constant="105" id="G0o-YV-z6G"/>
+                            <constraint firstItem="fDT-K3-B9t" firstAttribute="leading" secondItem="mwl-1X-So5" secondAttribute="leading" constant="16" id="L9w-cC-saS"/>
                             <constraint firstItem="TLd-JR-aHB" firstAttribute="top" secondItem="fDT-K3-B9t" secondAttribute="bottom" constant="37" id="MGu-IS-bA6"/>
                             <constraint firstItem="mwl-1X-So5" firstAttribute="trailing" secondItem="wfz-6D-fks" secondAttribute="trailing" constant="16" id="QVl-a4-4ok"/>
                             <constraint firstItem="Xiq-n8-KIO" firstAttribute="leading" secondItem="mwl-1X-So5" secondAttribute="leading" constant="16" id="XPo-vP-557"/>

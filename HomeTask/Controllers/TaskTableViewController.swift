@@ -94,10 +94,16 @@ class TaskTableViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         let familyId = Utils.getHash(email!)
         client.queryTask(familyId: familyId) { (snapshot) in
-            let groups = snapshot.value as! [String: Any]
-            let sortedGroup = groups.sorted(by: self.sortTasks)
-            self.tasks = sortedGroup
-            self.filteredTasks = self.tasks.filter(self.filterTasks)
+            if (snapshot.childrenCount > 0) {
+                let family = snapshot.value as! [String: Any]
+                let groups = family.first?.value as! [String: Any]
+                let sortedGroup = groups.sorted(by: self.sortTasks)
+                self.tasks = sortedGroup
+                self.filteredTasks = self.tasks.filter(self.filterTasks)
+            }
+            else {
+                self.filteredTasks.removeAll()
+            }
             self.tableView.reloadData()
         }
     }
@@ -215,16 +221,15 @@ class TaskTableViewController: UITableViewController {
         let familyId = Utils.getHash(email!)
         client.queryFamily(familyId: familyId) { (snapshot) in
             let value = snapshot.value as? NSDictionary
-            if value != nil {
-                let email = value?["family"] as? String ?? ""
-                let names = value?["name"] as? [String] ?? []
-                self.appDelegate.family.email = email
-                self.appDelegate.family.names = names
-                self.familyExisting = true
+            let email = value?["family"] as? String ?? ""
+            let names = value?["name"] as? [String] ?? ["Default"]
+            self.appDelegate.family.email = email
+            self.appDelegate.family.names = names
+            if value == nil {
+                let data = [Constants.FamilyFields.family: self.email! as String]
+                self.client.addFamily(familyId: familyId, mdata: data)
             }
-            else{
-                self.familyExisting = false
-            }
+            self.familyExisting = true
         }
     }
 }

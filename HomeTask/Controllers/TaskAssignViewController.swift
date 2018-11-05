@@ -83,5 +83,4 @@ class TaskAssignViewController: UIViewController, UIPickerViewDelegate, UIPicker
         name = appDelegate.family.names[row]
     }
     
-    
 }
