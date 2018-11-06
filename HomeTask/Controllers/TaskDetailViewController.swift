@@ -93,6 +93,8 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
     var dataController: DataController!
     var connected: Bool!
     let client = FirebaseClient.shared
+    
+    
     // Mark: Life Cycle
     
     override func viewDidLoad() {
@@ -190,6 +192,11 @@ class TaskDetailViewController: UIViewController, NSFetchedResultsControllerDele
             taskCompleted.selectedSegmentIndex = completed ? 1 : 0;
         }
 
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.hideKeyboardWhenTappedAround()
     }
     
     // Mark: Callback functions

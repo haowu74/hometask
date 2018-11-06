@@ -52,6 +52,11 @@ class TaskAssignViewController: UIViewController, UIPickerViewDelegate, UIPicker
         dueDatePicker.setDate(dueDate!, animated: false)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.hideKeyboardWhenTappedAround()
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         
         performSegue(withIdentifier: "unwindTaskAssigneeDue", sender: self)

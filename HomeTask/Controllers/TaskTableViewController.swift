@@ -10,6 +10,13 @@ import UIKit
 
 class TaskTableViewController: UITableViewController {
     
+    // Mark: IBOutlet
+    
+    @IBOutlet weak var showCompletedButton: UIBarButtonItem!
+    @IBOutlet weak var showOnlyMyTasksButton: UIBarButtonItem!
+    @IBOutlet weak var sortButton: UIBarButtonItem!
+    
+    
     // Mark: IBAction
     
     @IBAction func config(_ sender: Any) {
@@ -34,7 +41,7 @@ class TaskTableViewController: UITableViewController {
             sender.title = "All Tasks"
         }
         else {
-            sender.title = "Only My Tasks"
+            sender.title = "My Tasks"
         }
         filteredTasks = tasks.filter(filterTasks)
         tableView.reloadData()
@@ -42,7 +49,7 @@ class TaskTableViewController: UITableViewController {
     
     @IBAction func sortByDate(_ sender: UIBarButtonItem) {
         sortByDateAscending = !sortByDateAscending
-
+        sender.title = "Sort"
         filteredTasks = filteredTasks.sorted(by: sortTasks)
         tableView.reloadData()
     }
@@ -91,8 +98,12 @@ class TaskTableViewController: UITableViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
         indicator.startAnimating()
         indicator.backgroundColor = UIColor.white
+        
+        self.hideKeyboardWhenTappedAround()
         
         let familyId = Utils.getHash(email!)
         client.queryTask(familyId: familyId) { (snapshot) in

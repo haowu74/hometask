@@ -45,6 +45,11 @@ class PhotoPickerViewController: UIViewController, UIImagePickerControllerDelega
         }
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.hideKeyboardWhenTappedAround()
+    }
+    
     // Mark: Callbacks
     
     @objc func back(sender: UIBarButtonItem) {

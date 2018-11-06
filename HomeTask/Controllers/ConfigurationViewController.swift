@@ -55,6 +55,10 @@ class ConfigurationViewController: UIViewController {
         fullName.text = appDelegate.user
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.hideKeyboardWhenTappedAround()
+    }
 
     // Mark: Functions
     
